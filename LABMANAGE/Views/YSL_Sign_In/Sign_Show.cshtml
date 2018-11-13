@@ -1,0 +1,155 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using LABMANAGE.UntityCode
+@using LABMANAGE.Service.ysl_Sign_In.Dto
+<script src="~/JS/Ysl_Sign_Show.js"></script>
+<script src="~/JS/jquery-labelauty.js"></script>
+<link href="~/CSS/jquery-labelauty.css" rel="stylesheet" />
+<!-- Theme style -->
+<style>
+    #calendar {
+        max-width: 90%;
+        margin: 0 auto;
+    }
+    .fc-day{
+        height: 80px !important;
+    }
+    .dowebok {
+        list-style-type: none;
+    }
+
+    .dowebok li {
+        display: inline-block;
+    }
+
+    .dowebok li {
+        margin: 10px 0;
+    }
+
+    .dowebok input.labelauty + label {
+        font: 12px "Microsoft Yahei";
+    }
+</style>
+
+<div>
+    <div class="row">
+        @*左边菜单*@
+        <div id="left_user_name" class="col-md-2 hidden-sm hidden-xs" style="margin-top: 40px; margin-right: -40px; margin-left: 40px; background-color: white;">
+            <ul class="dowebok">
+                <li><input id="checkbox1" type="radio" name="radio" data-labelauty="网站签到" value="1" checked></li>
+                <li><input id="checkbox2" type="radio" name="radio" data-labelauty="指纹机" value="2"></li>
+            </ul>
+            <ul id="demo1" style="height:400px;"></ul>
+            @{
+                if (LoginBase.RoleCode != "R003")
+                {
+                    <div class="input-append">
+                        <button class="layui-btn" onclick="$('input[id=inpufile]').click();">
+                            <i class="layui-icon">&#xe608;</i> 添加考勤数据
+                        </button>
+                    </div>
+                }
+            }
+            
+        </div>
+        @*日历部分*@
+        <div class="col-md-10">
+            <div class="visible-xs-inline visible-sm-inline" style="margin-left: 5%; float: left; height: 20px; top: 10px;">
+                选择你要查看的用户：
+                <select id="userselect" onchange="userdata()">
+                    @{
+                        List<User_name_uidDto> list = TempData["list"] as List<User_name_uidDto>;
+                        if (LoginBase.RoleCode == "R003")
+                        {
+                            foreach (var item in list)
+                            {
+                                if (@item.ID == int.Parse(LoginBase.ID))
+                                {
+                                    <option value="@item.ID" selected="selected">@item.Real_Name</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.ID">@item.Real_Name</option>
+                                }
+                            }
+
+                        }
+                        else
+                        {
+                            bool flag = true;
+
+                            foreach (var item in list)
+                            {
+
+                                if (flag)
+                                {
+                                    <option value="@item.ID" selected="selected">@item.Real_Name</option>
+                                    flag = false;
+                                }
+                                else
+                                {
+                                    <option value="@item.ID">@item.Real_Name</option>
+                                }
+                            }
+                        }
+                    }
+                </select>
+            </div>
+            <div class="visible-xs-inline visible-sm-inline" style="margin-right:5%; float: right; height: 20px; top:10px;">
+                选择你要查看的类型：
+                <select id="typeselect" onchange="userdata()">
+                    <option value="1">网站签到</option>
+                    <option value="2">指纹机考勤</option>
+                </select>
+            </div>
+            <hr class="visible-xs-block visible-sm-block" />
+            <div id="calendar" style="margin-top:40px; background-color:white; "></div>
+        </div>
+
+        @{
+            if (LoginBase.RoleCode != "R003")
+            {
+                <div id="inputxlsx" style="display: none;">
+
+                    <form target="frm" action="/YSL_Sign_In/upFile" method="post" enctype="multipart/form-data">
+                        <input id="inpufile" type='file' name="file" style="float:left;" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+                        <input id="filesubmit" type="submit" value="提交" style="margin-bottom:10px;">
+                    </form>
+                    <iframe id='frm' name='frm' style="display:none;"></iframe>
+                    
+                    <script type="text/javascript">
+                        function callback(res) {
+                            layer.alert(res);
+                        }
+                        var frm = $("#frm");
+                        frm.load(function () {
+                            var wnd = this.contentWindow;
+                            var str = $(wnd.document.body).html();
+                            var obj = document.getElementById('inpufile');
+                            obj.outerHTML = obj.outerHTML;
+                            callback(str);
+                        });
+
+                        $('input[id=inpufile]').change(function () {
+                            $('#filesubmit').click();
+                        });
+                    </script>
+                
+                 </div>
+            }
+        }
+        
+    </div>
+</div>
+<script>
+    $(function () {
+        $(':input').labelauty();
+    });
+    window.onload = function () {
+        document.getElementById("left_user_name").style.height = document.getElementById("calendar").offsetHeight + 'px';
+    }
+</script>
+
+<script src="~/JS/Ysl_tree.js"></script>

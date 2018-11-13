@@ -1,0 +1,136 @@
+﻿$(function () {
+    var vsPage = 7;//可见页数
+    var pagesCount = 10;//总页数
+    var curPage = 1;//当前页
+    //GetSumPer(1, false);
+    GetSumList(1, false);
+    function GetSumList(curPage, flag) {
+        var nickName = $("#searchNames").val();
+        var nickTime = $("#searchTimes").val();
+        $.ajax({
+            url: "/Summary/GetSumList",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: "{nickName:'" + nickName + "',nickTime:'" + nickTime + "',curPage:'" + curPage + "'}",
+            async: true,
+            cache: false,
+            type: "POST",
+            success: function (data) {
+                var pageSize = 1;
+                var obj = JSON.parse(data);
+                if (obj.recordCount > pageSize) {
+                    ShowPage(obj.recordCount, pageSize, "pagesSums", curPage, flag);
+                }
+                var html = '';
+                
+                var index = (curPage - 1) * pageSize + 1;
+                for (var i = 0 ; i < obj.lists.length ; i++) {                                                                                         
+                    html += '<tr><td>' + obj.lists[i].User_ID + '</td><td>' + obj.lists[i].Real_Name + '</td><td title="obj.lists[i].Title">' + obj.lists[i].Title + '</td><td title="' + obj.lists[i].Progress + '">' + obj.lists[i].Progress + '</td><td title="' + obj.lists[i].Problem + '">' + obj.lists[i].Problem + '</td><td>' + obj.lists[i].IS_Solve +
+                        '</td>';
+                    html += '<td><a class="btn btn-primary btn_more" href="/Summary/Person?id=' + obj.lists[i].User_ID + '" id="' + obj.lists[i].User_ID + '">更多</a>';
+                    //onclick=\"Update(\'' + id + '\')\"
+                    html += '<a class="btn btn-primary btn_eval" data-toggle="modal" data-target="#Evaluation"  id="'+obj.lists[i].ID+'">评价</a></td></tr> ';
+                }
+                if (obj.lists.length == 0) {
+                    $("#pagesSums").empty();
+                    html = '<p>暂无相关总结</p>';
+                }
+                $("#sumItems").empty().html(html);
+
+
+                $(".btn_eval").on("click", function () {
+                    var id = $(this).attr("id");
+                    openEvalSum(id);
+                });
+                $("#searchBtn").on("click", function () {
+                    GetSumList(1, false);
+                });
+                //$(".btn_more").bind("click", function () {
+                //    var id = $(this).attr("id");
+                //    $()
+                //    //GetSumPer(1, id, false);
+                //});
+
+            }
+        });
+    }
+    
+    //function GetSumPer(curPage, id, flag) {
+    //    var nickTime = "";
+    //    $.ajax({
+    //        url: "/Summary/GetSumPer",
+    //        contentType: "application/json; charset=utf-8",
+    //        dataType: "json",
+    //        data: "{'nickTime':'" + nickTime + "','curPage':'" + curPage + "','id':'" + id + "'}",
+    //        async: true,
+    //        cache: false,
+    //        type: "POST",
+    //        success: function (data) {
+    //            var pageSize = 1;
+    //            var obj = JSON.parse(data);
+    //            if (obj.recordCount > pageSize) {
+    //                ShowPage(obj.recordCount, pageSize, "pagesSum", curPage, flag);
+    //            }
+    //            var html = '';
+
+    //            var index = (curPage - 1) * pageSize + 1;
+    //            for (var i = 0 ; i < obj.lists.length ; i++) {
+    //                var id = obj.lists[i].ID;
+    //                var time = obj.lists[i].Time.replace(/T/g, ' ').split('.')[0];
+    //                html += '<tr><td>' + obj.lists[i].ID + '</td><td title="obj.lists[i].Title">' + obj.lists[i].Title + '</td><td title="' + obj.lists[i].Progress + '">' + obj.lists[i].Progress + '</td><td title="' + obj.lists[i].Problem + '">' + obj.lists[i].Problem + '</td><td>' + obj.lists[i].IS_Solve +
+    //                    '</td><td title="' + obj.lists[i].Teacher_evaluation + '">' + obj.lists[i].Teacher_evaluation + '</td><td>' + time + '</td>'
+    //            }
+    //            if (obj.lists.length == 0) {
+    //                $("#pagesSum").empty();
+    //                html = '<p>暂无相关总结</p>';
+    //            }
+    //            $("#sumItem").empty().html(html);
+
+    //        },
+    //        error: function (data) {
+    //            alert("出现未知错误,请联系管理员!");
+    //        }
+    //    });
+    //}
+
+    function ShowPage(count, pageSize, id, curPage, flag) {
+        pagesCount = Math.floor(count / pageSize) + (count % pageSize == 0 ? 0 : 1);
+        vsPage = pagesCount > vsPage ? vsPage : pagesCount;
+        $('#' + id).twbsPagination({
+            totalPages: pagesCount,
+            visiblePages: vsPage,
+            startPage: curPage,
+            version: '1.1',
+            onPageClick: function (event, page) { //点击分页回调函数
+                $('#' + id).find(".page").removeClass("active");
+                $('#' + id).find(".page[data-page='" + page + "']").addClass("active");
+                if (flag != false || flag == undefined) {
+                    if (id == "pagesSums") {
+                        GetSumList(page, true);
+                    }
+                    if (id == "pagesSum") {
+                        GetSumPer(page, true);
+                    }
+                }
+                else {
+                    flag = true;
+                }
+            }
+        });
+    }
+
+   
+
+});
+
+function openEvalSum(id) {
+    //iframe层
+    layer.open({
+        type: 2,
+        title: '评价',
+        shadeClose: true,
+        shade: 0.8,
+        area: ['700px', '450px'],
+        content: ['/Summary/EvalSum?Id=' + id + "&flag=false", 'no'] //iframe的url
+    });
+}

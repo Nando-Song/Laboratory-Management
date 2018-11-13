@@ -1,0 +1,17 @@
+﻿body {
+}
+#searchTimes{
+    height:34px;
+    width:630px;
+}
+.message{
+      color: red;
+    font-size: 12px;
+    width: auto !important;
+}
+label{
+    margin-bottom:20px;
+}
+.form-group{
+    margin-bottom:30px !important;
+}

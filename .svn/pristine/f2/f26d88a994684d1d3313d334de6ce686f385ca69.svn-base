@@ -1,0 +1,122 @@
+﻿@model LABMANAGE.Service.leave.Dto.LeaveBaseDto
+@using LABMANAGE.Service.leave.Dto;
+
+@using LABMANAGE.UntityCode;
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>申请假期</title>
+    <link type="text/css" href="~/CSS/Summary.css" rel="stylesheet" />
+    <link type="text/css" href="~/Content/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap 3.3.6 -->
+    <link href="~/Content/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- DataTables -->
+    <link href="~/Content/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/plugins/datatables/jquery.dataTables.min.css" rel="stylesheet" />
+    <!-- Date Picker -->
+    <link rel="stylesheet" href="~/Content/plugins/datepicker/datepicker3.css">
+    <!-- Daterange picker -->
+    <link rel="stylesheet" href="~/Content/plugins/daterangepicker/daterangepicker.css">
+    <!-- bootstrap wysihtml5 - text editor -->
+    <link rel="stylesheet" href="~/Content/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/Content/dist/css/AdminLTE.min.css">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+    folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="~/Content/dist/css/skins/_all-skins.min.css">
+ 
+    <link href="~/CSS/Summary.css" rel="stylesheet" />
+    <link href="~/CSS/AskLeave.css" rel="stylesheet" />
+</head>
+<body>
+    <form action="/Leave/Index" method="post">
+        <div class="box-body">
+            <div class="form-group">
+                <label>请假时间:</label>
+                <div class="input-group">
+                    <input id="searchTimes" class="form-control pull-right" name="time" type="text" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label>请假事由:</label>
+                @Html.TextBoxFor(m => m.Reason, new { @id = "Reason", @placeholder = "请填写请假原因", @autocomplete = "on", @class = "form-control aInput", @type = "text" })
+                @Html.ValidationMessageFor(m => m.Reason, "", new { @class = "message" })
+            </div>
+            <div class="form-group">
+                <label>审核人:</label>
+                <label>
+                    <select class="form-control" id="valid"  name="valid" style="border-radius: 5px;">
+                        <option style="color:rgba(128, 128, 128, 0.86);" value="--请选择审核人--">--请选择审核人--</option>
+                        @{
+                           
+                            List<UserBaseDto> list = TempData["peoplelist"] as List<UserBaseDto>;
+                            foreach (var item in list)
+                            {
+                                if(@item.U_Role==1 || @item.U_Role==2)
+                                {
+                                    <option value="@item.ID">@item.Real_Name</option>
+                                }
+                                
+                            }
+                        }
+                    </select>
+                </label>
+            </div>
+            <div class="form-group">
+
+                <div class="input-group pull-right">
+
+                    <button class="btn btn-info">提交</button>
+                    <i>&nbsp;&nbsp;</i>
+                </div>
+            </div>
+        </div>
+    </form>
+    <script src="~/Content/plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <!-- DataTables -->
+    <script src="~/Content/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/Content/plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <!-- Bootstrap 3.3.6 -->
+    <script src="~/Content/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <!-- InputMask -->
+    <script src="~/Content/plugins/input-mask/jquery.inputmask.js"></script>
+    <script src="~/Content/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+    <script src="~/Content/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+    <!-- date-range-picker -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+    <script src="~/Content/plugins/daterangepicker/daterangepicker.js"></script>
+    <!-- bootstrap datepicker -->
+    <script src="~/Content/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <!-- bootstrap color picker -->
+    <script src="~/Content/plugins/colorpicker/bootstrap-colorpicker.min.js"></script>
+    <!-- bootstrap time picker -->
+    <script src="~/Content/plugins/timepicker/bootstrap-timepicker.min.js"></script>
+
+    <!-- Page script -->
+    <script src="~/Content/layer/layer.js"></script>
+    <script src="~/JS/Date.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            var msg = "@ViewBag.Mssg";
+            if (msg != "") {
+                var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                parent.layer.msg(msg, { time: 2000 });
+                parent.layer.close(index);
+            }
+        });
+    </script>
+
+</body>
+</html>

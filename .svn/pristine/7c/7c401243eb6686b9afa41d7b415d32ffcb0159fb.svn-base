@@ -1,0 +1,59 @@
+﻿//公告显示
+function show()
+{
+    $.ajax({
+        url: "/WyhDuty/ShowNotice",
+        dataType: 'json',
+        async: false,//请求是否异步，默认异步;
+        type: "POST",
+        success: function (result) {
+            //alert(result[0]['Text'].toString());
+            var date = new Date(parseInt(result[0]['Time'].slice(6, 19)));
+
+            var formatDateTime = GetDate(date);
+            document.getElementById('myModalTitle').innerText = result[0]['Title'];
+            document.getElementById('myModalBody').innerText = result[0]['Text'];
+            document.getElementById('myModalName').innerText = "发布人："+ result[0]['Name'];
+            document.getElementById('myModalTime').innerText = "时间：" + formatDateTime;
+            //请求成功处理
+        },
+        error: function (result) {
+            layer.alert("出现未知错误（公告） 请联系管理员");
+        }
+    });
+
+}
+//更新公告表
+function Update() {
+    var oNoticeTitle = document.getElementById('UpNoticeTitle').value;
+    var oNoticeText = document.getElementById('UpNoticeBody').value;
+    var oNowTime = new Date().toLocaleTimeString();
+
+    if (oNoticeTitle != "" && oNoticeText != "")
+    {
+        $.ajax({
+            url: "/WyhDuty/InsertDto",
+            dataType: 'json',
+            data: {
+                "oNoticeTitle": oNoticeTitle,
+                "oNoticeText": oNoticeText,
+                "oNowTime": oNowTime
+            },
+            type: "POST",
+            success: function (result) {
+                //var date = new Date(parseInt(result[0]['Time'].slice(6, 19)));
+                //var formatDateTime = GetDate(date);
+                //document.getElementById('myModalTitle').innerText = result[0]['Title'];
+                //document.getElementById('myModalBody').innerText = result[0]['Text'];
+                //document.getElementById('myModalName').innerText = "发布人：" + result[0]['Name'];
+                //document.getElementById('myModalTime').innerText = "时间：" + formatDateTime;
+                alert("公告修改成功！");
+                //请求成功处理
+            },
+            error: function (result) {
+                layer.alert("公告修改失败！ 请联系管理员");
+            }
+        });
+    }
+    
+}

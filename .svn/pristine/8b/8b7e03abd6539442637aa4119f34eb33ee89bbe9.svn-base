@@ -1,0 +1,54 @@
+﻿verifyCode = new GVerify("v_container"); //验证码
+var f7 = f8 = 1;
+
+$("#room").blur(function () {
+    if ($("#room").val() == "--请选择实验室--") {
+        f8 = 0;
+        $(".error").html("请选择你所在的实验室");
+    }
+    else {
+        f8 = 1;
+        $(".error").html("");
+    }
+})
+
+$(".rShort").blur(function () {
+    var res = verifyCode.validate($(".rShort").val());
+    if (res) {
+        $(".error").html("");
+        f7 = 1;
+    }
+    else {
+        $(".error").html("验证码错误");
+        $(".r7").html("*");
+        f7 = 0;
+    }
+})
+
+function CheckForm() {
+    if ($("#room").val() == "--请选择实验室--") {
+        f8 = 0;
+        $(".error").html("请选择你所在的实验室");
+    }
+    else {
+        f8 = 1;
+        if (f7 == 0) $(".error").html("验证码错误");
+        else $(".error").html("");
+    }
+
+    var res = verifyCode.validate($(".rShort").val());
+    if (res) {
+        if (f8 == 0) $(".error").html("请选择你所在的实验室");
+        else $(".error").html("");
+        f7 = 1;
+    }
+    else {
+        $(".error").html("验证码错误");
+        $(".r7").html("*");
+        f7 = 0;
+    }
+     
+    if (f7 == 1 && f8 == 1) { return true; }
+    else { return false; }
+}
+

@@ -1,0 +1,89 @@
+﻿@using LABMANAGE.UntityCode
+@using LABMANAGE.Unitity
+@using LABMANAGE.Service.Rooms.Dto
+@{
+    ViewBag.Title = "UserManage";
+}
+<link href="~/CSS/UserManage.css" rel="stylesheet" />
+
+<input type="hidden" id="pageSize" value="@ConfigHelp.GetConfigValue("pageSize")" />
+<div class="manage">
+    <section class="content-header">
+        <h1 class="mTitle">用户管理</h1>
+    </section>
+    <div class="manageBody">
+        <div class="mBodyHead">
+            <div class="mhLeft col-md-5">
+                @{
+                    if (LoginBase.RoleCode == "R001") { 
+                        <select class="col-md-2 size form-control">
+                            <option>身&nbsp;&nbsp;&nbsp;份</option>
+                            <option>教&nbsp;&nbsp;&nbsp;师</option>
+                            <option>学&nbsp;&nbsp;&nbsp;生</option>
+                        </select>
+                    }
+                }
+                <select class="col-md-2 form-control room">
+                    <option style="color:rgba(128, 128, 128, 0.86);" value="0">实验室</option>
+                    @{
+                        List<RoomDto> list = TempData["list"] as List<RoomDto>;
+                        foreach (var item in list)
+                        {
+                            <option value="@item.ID">@item.Name</option>
+                        }
+                    }
+                </select>            
+            </div>
+            <div class="col-md-4"></div>
+            <label class ="col-md-1 mLabel">姓名：</label>
+            <div class="mhRight col-md-2 input-group">                
+                <input type="text" class="form-control" id="search">
+                <button class="sea btn btn-primary">搜索</button>               
+            </div>   
+        </div>
+        <table class="table mtable table-hover">
+            <thead>
+                <tr class="mtr">
+                    <th>序号</th>
+                    <th>实验室</th>
+                    <th>身份</th>
+                    <th>昵称</th>
+                    <th>真实姓名</th>
+                    <th>Email</th>
+                    <th>手机号</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody class="List">
+            </tbody>
+        </table>
+        <div class="mBodyFooter">
+            <div class="mfLeft">
+                @{
+                    if (LoginBase.RoleCode == "R001") { <button class="add btn btn-info">添加教师</button> }                    
+                }           
+            </div>
+            <div class="mfRight">
+                <ul class="Page"></ul>
+            </div>
+            <input type="text" value="@LoginBase.RoleCode" style="display:none;" id="hidden">
+        </div>
+    </div>  
+</div>
+<script src="~/JS/UserManage.js"></script>
+<script src="~/Scripts/jquery.twbsPagination.js"></script>
+<script src="~/Content/layer/layer.js"></script>
+<script>
+    var msg = "@ViewBag.AddMessage";
+    if (msg != "") {
+        layer.msg(msg, { time: 2000 });
+        setInterval("window.location.reload();", 2000);
+    }
+    var msg = "@ViewBag.ChaMessage";
+    if (msg != "") {
+        setTimeout("window.location.reload();", 2000);
+        layer.msg(msg, { time: 2000 });
+    }
+</script>
+

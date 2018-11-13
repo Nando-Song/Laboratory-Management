@@ -1,0 +1,109 @@
+﻿@using LABMANAGE.Service.Equip.Dto
+@model LABMANAGE.Service.Equip.Dto.EquipBaseDto
+@using LABMANAGE.UntityCode;
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>设备申请</title>
+    <script src="~/Content/plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <link type="text/css" href="~/CSS/Summary.css" rel="stylesheet" />
+    <link type="text/css" href="~/Content/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap 3.3.6 -->
+    <link href="~/Content/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- DataTables -->
+    <link href="~/Content/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/plugins/datatables/jquery.dataTables.min.css" rel="stylesheet" />
+    <!-- bootstrap wysihtml5 - text editor -->
+    <link rel="stylesheet" href="~/Content/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/Content/dist/css/AdminLTE.min.css">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+    folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="~/Content/dist/css/skins/_all-skins.min.css">
+    <link href="~/CSS/Summary.css" rel="stylesheet" />
+    <link href="~/CSS/AskEquip.css" rel="stylesheet" />
+</head>
+<body>
+    @using (Html.BeginForm("Index", "Equip", FormMethod.Post))
+    {
+        <div>
+            <div class="box-body">
+          
+                <div class="form-group">
+                    <label>设备名称:</label>
+                    @Html.TextBoxFor(m => m.Equipment_Name, new { @id = "Equipment_Name", @placeholder = "请填写设备名称", @autocomplete = "on", @class = "form-control aInput", @type = "text" })
+                    @Html.ValidationMessageFor(m => m.Equipment_Name, "", new { @class = "message" })
+                </div>
+                <div class="form-group">
+                    <label>设备数量:</label>
+                    @Html.TextBoxFor(m => m.Number, new { @id = "Number", @placeholder = "请填写申请数量", @autocomplete = "on", @class = "form-control aInput", @type = "text" })
+                    @Html.ValidationMessageFor(m => m.Number, "", new { @class = "message" })
+                </div>
+                <div class="form-group">
+                    <label>审核人:</label>
+                    <label>
+                        <select class="form-control" id="valid" name="valid">
+                            <option style="color:rgba(128, 128, 128, 0.86);" value="--请选择审核人--">--请选择审核人--</option>
+                            @{
+                                List<EUserBaseDto> list = TempData["peoplelist"] as List<EUserBaseDto>;
+                                foreach (var item in list)
+                                {
+                                    if ((@item.IsExamine == 1) && (@item.U_Role == 1 || @item.U_Role == 2))
+                                    {
+                                        <option value="@item.ID">@item.Real_Name</option>
+                                    }
+                                }
+                            }
+                        </select>
+                    </label>
+
+                </div>
+                <div class="form-group">
+
+                    <div class="input-group pull-right">
+
+                        <button class="btn btn-info">提交</button>
+                        <i>&nbsp;&nbsp;</i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <!-- DataTables -->
+    <script src="~/Content/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/Content/plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <!-- Bootstrap 3.3.6 -->
+    <script src="~/Content/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <!-- InputMask -->
+    <script src="~/Content/plugins/input-mask/jquery.inputmask.js"></script>
+    <script src="~/Content/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+    <script src="~/Content/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+ 
+    <!-- Page script -->
+    <script src="~/Content/layer/layer.js"></script>
+
+
+    <script type="text/javascript">
+        $(function () {
+            var msg = "@ViewBag.Mssg";
+            if (msg != "") {
+                var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                parent.layer.msg(msg, { time: 2000 });
+                parent.layer.close(index);
+            }
+        });
+    </script>
+
+</body>
+</html>

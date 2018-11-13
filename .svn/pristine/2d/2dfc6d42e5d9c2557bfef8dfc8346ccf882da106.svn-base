@@ -1,0 +1,74 @@
+﻿@model LABMANAGE.Service.Register.Dto.RegisterDto
+@using LABMANAGE.Service.Register.Dto
+@{
+    Layout = null;
+    //ViewBag.Title = "实验室管理系统";
+    <link href="~/Content/dist/css/AdminLTE.min.css" rel="stylesheet" />  
+    <link href="~/Content/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/CSS/Register/css/Register.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome/css/font-awesome.min.css" rel="stylesheet" />    
+}
+<head>
+    <title>实验室管理系统</title>
+</head>    
+<div class="register-box">
+    <h2 class="register-logo title">实验室管理系统</h2>
+    <div class="register-box-body">
+        <form method="post" onsubmit="return CheckForm()">            
+            <div class="error"></div>
+            <div class="form-group rForm">
+                <span class="rP1"><i class="fa fa-user"></i></span>
+                <input type="text" name="Name" placeholder="请填写昵称" id="name" autocomplete="on" />
+                <div class="required r1">*</div>
+            </div>
+            <div class="form-group rForm">
+                <span class="rP2"><i class="fa fa-user-o"></i></span>
+                <input type="text" name="Real_Name" id="realName" placeholder="请填写真实姓名" autocomplete="on" />
+                <div class="required r2">*</div>
+            </div>
+            <div class="form-group rForm">
+                <span class="rP7"><i class="fa fa-phone"></i></span>
+                <input type="tel" name="Phone" id="phoneNumber" placeholder="请填写手机号码" autocomplete="on" />
+                <div class="required r3">*</div>
+            </div>
+            <div class="form-group rForm">
+                <span class="rP3"><i class="fa fa-envelope"></i></span>
+                <input type="email" name="Email" id="email" placeholder="请填写邮箱" autocomplete="on" />
+                <div class="required r4">*</div>
+            </div>
+            <div class="form-group rForm">
+                <span class="rP4"><i class="fa fa-lock"></i></span>
+                <input type="password" name="Password" id="password" placeholder="请填写密码" />
+                <div class="required r5">*</div>
+            </div>
+            <div class="form-group rForm">
+                <span class="rP5"><i class="fa fa-lock"></i></span>
+                <input type="password" name="confirm" id="confirm" placeholder="请确认密码" />
+                <div class="required r6">*</div>
+            </div>
+            <div class="form-group rForm">
+                <span class="rP6"><i class="fa fa-check-square"></i></span>
+                <input type="text" name="verify" class="rShort" />
+                <div id="v_container"></div>
+                <div class="required r7">*</div>
+            </div>
+            <div class="row rRow">
+                <div class="col-xs-8">
+                    <span class="rLogin">已有账号？立即 <a href="/Login/Login">登陆</a></span>
+                </div>
+                <div class="col-xs-3">
+                    <button type="submit" class="rSubmit btn btn-info">注册</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Content/gVerify/gVerify.js"></script>  
+<script src="~/JS/Register/Register.js"></script> 
+
+
+
+
+

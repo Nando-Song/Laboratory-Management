@@ -1,0 +1,44 @@
+﻿@using LABMANAGE.Service.Sum.Dto
+@model LABMANAGE.Service.Sum.Dto.SumBaseDto 
+@{
+    Layout = null;
+}
+<script src="~/Content/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script src="https://cdn.ckeditor.com/4.6.2/standard/ckeditor.js"></script>
+<link type="text/css" href="~/CSS/Summary.css" rel="stylesheet" />
+<link type="text/css" href="~/Content/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>评价</title>
+</head>
+<body>
+@using (Html.BeginForm("Index", "Summary", FormMethod.Post))
+{
+    <div style="height:90%;">
+        <textarea name="Teacher_evaluation" id="text" style="width:300px;"></textarea>
+        <input style="display:none;" id="ID" name="TID" value="@ViewBag.ID">
+        <script>
+            CKEDITOR.replace("Teacher_evaluation");
+        </script>
+    </div>
+    <br/>
+    <div class="sfooter">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="submit" class="btn btn-primary">提交</button>
+    </div>
+}
+<script type="text/javascript">
+    $(function () {
+        var msg = "@ViewBag.Msgs";
+        if (msg != "") {
+            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+            parent.layer.msg(msg, { time: 2000 });
+            parent.layer.close(index);
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+﻿using LABMANAGE.SendEmail;
+using LABMANAGE.Service.Register;
+using LABMANAGE.Service.Register.Dto;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace LABMANAGE.Controllers
+{
+    public class RegisterController : Controller
+    {
+        public IRegisterService registerService { get; set; }
+        //
+        // GET: /Register/
+        public ActionResult Register()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult Register(RegisterDto UserInfo)
+        {
+            try
+            {
+                bool InsertCount = registerService.InsertInfo(UserInfo);
+                /// <summary>
+                /// 发送邮件
+                /// </summary>
+                /// <param name="title">邮件主题</param>
+                /// <param name="email">要发送对象的邮箱</param>
+                /// <param name="content">邮件内容</param>
+                /// <returns></returns>
+                if (InsertCount)
+                {
+                    string senderServerIp = "smtp.163.com";   //使用163代理邮箱服务器（也可是使用qq的代理邮箱服务器，但需要与具体邮箱对相应）
+                    string toMailAddress = "3253475057@qq.com";              //要发送对象的邮箱
+                    string fromMailAddress = "CSBS159357@163.com";//你的邮箱
+                    string subjectInfo = "学生注册审核通知";                  //主题
+                    string bodyInfo = "<p>" + "有学生进行注册，请前往“用户管理”进行审核"+ "</p>";//以Html格式发送的邮件
+                    string mailUsername = "CSBS159357@163.com";              //登录邮箱的用户名
+                    string mailPassword = "shaobo5211314"; //对应的登录邮箱的第三方密码（你的邮箱不论是163还是qq邮箱，都需要自行开通stmp服务）
+                    string mailPort = "25";                      //发送邮箱的端口号
+                    //string attachPath = "E:\\123123.txt; E:\\haha.pdf";
+
+                    //创建发送邮箱的对象
+                    Email myEmail = new Email(senderServerIp, toMailAddress, fromMailAddress, subjectInfo, bodyInfo, mailUsername, mailPassword, mailPort, false, false);
+
+                    //添加附件
+                    //email.AddAttachments(attachPath);
+                    //string message;
+                    if (myEmail.Send())
+                    {                        
+                        return Content("<script>alert('已将审核邮件发送给管理员，请耐心等待');window.location.href='Register';</script>");    
+                    }
+                    else
+                    {
+                        return Content("<script>alert('邮件发送失败')window.location.href='Register';</script>");                     
+                    }
+                }
+            }
+            catch
+            {
+            }
+            return View();
+        }
+        [HttpPost]
+        public ContentResult CheckName() //检测昵称是否已经存在
+        {
+            try
+            {
+                string Name = Request.Form[0].ToString();
+                List<RegisterDto> oneList = new List<RegisterDto>();
+                oneList = registerService.GetNameInfo(Name);
+                if (oneList.Count > 0)
+                {
+                    return Content("true");
+                }
+                else
+                {
+                    return Content("false");
+                }
+            }
+            catch
+            {
+                return Content("false");
+            }
+        }
+        [HttpPost]
+        public ContentResult CheckPhone() //检测手机号是否已经存在
+        {
+            try
+            {
+                string Phone = Request.Form[0].ToString();
+                List<RegisterDto> oneList = new List<RegisterDto>();
+                oneList = registerService.GetPhoneInfo(Phone);
+                if (oneList.Count > 0)
+                {
+                    return Content("true");
+                }
+                else
+                {
+                    return Content("false");
+                }
+            }
+            catch
+            {
+                return Content("false");
+            }
+        }
+        [HttpPost]
+        public ContentResult CheckEmail() //检测邮箱是否已经存在
+        {
+            try
+            {
+                string Email = Request.Form[0].ToString();
+                List<RegisterDto> oneList = new List<RegisterDto>();
+                oneList = registerService.GetEmailInfo(Email);
+                if (oneList.Count > 0)
+                {
+                    return Content("true");
+                }
+                else
+                {
+                    return Content("false");
+                }
+            }
+            catch
+            {
+                return Content("false");
+            }
+        }
+	}
+}

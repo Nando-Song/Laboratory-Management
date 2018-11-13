@@ -1,0 +1,137 @@
+﻿@using LABMANAGE.Service.lxm.Dto
+@*@Model LABMANAGE.Service.lxm.Dto.UserBaseDto*@
+
+    @{
+        ViewBag.Title = "Index";
+        <link rel="stylesheet" href="../../CSS/lxm/lxm.css" type="text/css" />
+
+    }
+@{
+     List<UserBaseDto> list = TempData["list"] as List<UserBaseDto>;
+     foreach(var item in list){
+         if (item.Motto == "" || item.Motto == null)
+         {
+             item.Motto = "说点什么呢……";
+         }
+        <div class="box-body box-profile">
+            <div class="box box-widget widget-user">
+                @{
+                    if(item.Image == null){
+                        <div class="widget-user-header bg-black" style="background: url('../../images/photo1.png') center center;">
+                            
+                                <h3 class="widget-user-username">@item.Name</h3>
+                                <h5 class="widget-user-desc">@item.Motto</h5>
+                            </div>
+                            <div class="widget-user-image">
+                                <img class="img-circle" id="appear" src="../../images/user.jpg" alt="User Avatar">
+                            </div>
+                    }
+                    else{
+                        <div class="widget-user-header bg-black" style="background: url('../../images/photo1.png') center center;">
+                                <h3 class="widget-user-username">@item.Name</h3>
+                                <h5 class="widget-user-desc">@item.Motto</h5>
+                            </div>
+                            <div class="widget-user-image">
+                                <img class="img-circle" id="appear" src=@item.Image alt="User Avatar">
+                            </div>
+                    }
+                }
+                <input type="file" id="fileupload" name="files" multiple>
+                <img id="preview" src="" width="60" height="60">
+                <button class=" btn btn-primary" id="Start">修改头像</button>
+                <div class="nav-tabs-custom">
+                    <ul class="nav nav-tabs">
+                        <li class=""><a href="#activity" data-toggle="tab" aria-expanded="false">签到情况</a></li>
+                        <li class=""><a href="#timeline" data-toggle="tab" aria-expanded="false">请假情况</a></li>
+                        <li class="active"><a href="#settings" data-toggle="tab" aria-expanded="true">值日情况</a></li>
+                        <li class=""><a href="#summary" data-toggle="tab" aria-expanded="false">每周学习总结</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane" id="activity">
+                        </div>
+                        <!-- /.tab-pane -->
+                        <div class="tab-pane" id="timeline">
+                        </div>
+                        <!-- /.tab-pane -->
+
+                        <div class="tab-pane active" id="settings">
+                        </div>
+                        <!-- /.tab-pane -->
+                        <div class="tab-pane" id="summary">
+                            每周学习总结
+                        </div>
+                    </div>
+                    <!-- /.tab-content -->
+                </div>
+                <a href="/Info/modify" class="btn btn-primary btn-block"><b>修改个人信息</b></a>
+        </div>
+            </div>
+     }
+}
+      
+    <script src="~/JS/bootstrap/js/jquery.min.js"></script>
+    <script src="~/JS/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/JS/jquery.ui.widget.js"></script>
+    <script src="~/JS/jquery.iframe-transport.js"></script>
+    <script src="~/JS/jquery.fileupload.js"></script>
+
+    <script type="text/javascript">
+
+        $('#fileupload').fileupload({
+
+            url: "/Info/img",
+            Type: "POST",
+            dataType: 'json',
+            autoUpload: true,
+            acceptFileTypes: "/(\.|\/)(gif|jpe?g|png)$/i",
+            add: function (e, data) {
+                $("#Start").click(function () {
+                    data.submit();
+                })
+                alert("已选择文件，可以更新头像！");
+            },
+            success: function (response, status) {
+                var obj = JSON.parse(response);
+                var imgPath = "../.." + obj["filePath"];
+                //$("#imglist").append('<li><img src="' + imgPath + '" /> </li>');
+                $('#appear').attr("src", imgPath);
+
+            },
+            done: function (e, data) {
+                alert("update finish");
+            },
+            error: function (error) {
+                alert("error");
+            },
+        });
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            $("#fileupload").change(function () {
+                var $file = $(this);
+                var fileObj = $file[0];
+                var windowURL = window.URL || window.webkitURL;
+                var dataURL;
+                var $img = $("#preview");
+
+                if (fileObj && fileObj.files && fileObj.files[0]) {
+                    dataURL = windowURL.createObjectURL(fileObj.files[0]);
+                    $img.attr('src', dataURL);
+                } else {
+                    dataURL = $file.val();
+                    var imgObj = document.getElementById("preview");
+                    // 两个坑:
+                    // 1、在设置filter属性时，元素必须已经存在在DOM树中，动态创建的Node，也需要在设置属性前加入到DOM中，先设置属性在加入，无效；
+                    // 2、src属性需要像下面的方式添加，上面的两种方式添加，无效；
+                    imgObj.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale)";
+                    imgObj.filters.item("DXImageTransform.Microsoft.AlphaImageLoader").src = dataURL;
+
+                }
+            });
+        });
+    </script>
+
+
+
+
+

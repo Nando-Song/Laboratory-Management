@@ -1,0 +1,65 @@
+﻿@using LABMANAGE.UntityCode;
+@{
+    ViewBag.Title = "UserManage";
+}
+<link href="~/CSS/UserManage.css" rel="stylesheet" />
+
+<div class="manage">
+    <h2 class="mTitle">用户管理</h2>
+    <div class="manageBody">
+        <div class="mBodyHead">
+            <div class="mhLeft col-md-5">
+                <span>每页显示&nbsp;</span>
+                <select class="col-md-2 size">
+                    <option>5</option>
+                    <option>10</option>
+                    <option>15</option>
+                </select>
+                <span>&nbsp;条记录</span>
+            </div>
+            <div class="col-md-5"></div>
+            <div class="mhRight col-md-2 input-group">
+                <input type="text" class="form-control" id="search" value="">
+                <span class="input-group-addon sea btn">搜索</span>
+            </div>
+        </div>
+        <table class="table mtable table-hover">
+            <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>身份</th>
+                    <th>昵称</th>
+                    <th>真实姓名</th>
+                    <th>Email</th>
+                    <th>手机号</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody class="List">
+            </tbody>
+        </table>
+        <div class="mBodyFooter">
+            <div class="mfLeft">
+                @{
+                    if (LoginBase.RoleCode == "R001") { <button class="add btn btn-info">添加教师</button> }
+                    @*else { <button class="add btn btn-info">添加学生</button> }*@
+                }           
+            </div>
+            <div class="mfRight">
+                <ul class="Page"></ul>
+            </div>
+            <input type="text" value="@LoginBase.RoleCode" style="display:none;" id="hidden">
+        </div>
+    </div>  
+</div>
+<script src="~/JS/UserManage.js"></script>
+<script src="~/Scripts/jquery.twbsPagination.js"></script>
+<script src="~/Content/layer/layer.js"></script>
+<script>
+    var msg = "@ViewBag.AddMessage";
+    if (msg != "") layer.msg(msg, { time: 2000 });
+    var msg = "@ViewBag.ChaMessage";
+    if (msg != "") layer.msg(msg, { time: 2000 });
+</script>
+

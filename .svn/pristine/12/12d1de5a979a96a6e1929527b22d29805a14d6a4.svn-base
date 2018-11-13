@@ -1,0 +1,183 @@
+﻿body{
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+.manage{
+    margin:0px 10px;
+    padding:0px;
+}
+.mTitle{
+    padding:10px 0px 0px 0px;
+    margin:0px;
+}
+.manageBody{
+    margin-top:15px;
+    background-color:#ffffff;
+    border-top: 3px solid #d2d6de;
+}
+.mtable{
+    border-top:2px solid #F4F4F4;
+    border-bottom:1px solid #F4F4F4;
+}
+.mtable thead tr th{
+    text-align:center;
+}
+.mtable tbody tr td{
+    text-align:center;
+    line-height:40px;
+}
+.mBodyHead{
+    margin:15px 15px;
+}
+.mhLeft{
+    line-height:34px;
+}
+.mhLeft select{
+    margin-top:7px;
+}
+.mhLeft span{
+    float:left;
+}
+.col-md-5{
+    padding-left:0px !important;
+}
+.input-group-addon{
+    background-color:#3c8dbc !important;
+    color:white !important;
+}
+.mBodyFooter{
+    margin:0px 15px 15px 15px;  
+    height:50px;
+}
+.mfLeft{
+    padding-bottom:15px;
+    width:85px !important;
+    float:left;
+}
+.mfRight{
+    float:right;
+    margin-top:-19px;
+}
+.change{
+    margin-left:8px;
+}
+.aDiv{
+    margin:0 auto;
+    width:345px;
+}
+.aTable input{
+    width:250px;
+    height:30px;
+}
+.aTable tr td{
+    line-height:50px;
+    font-size:16px;
+}
+.aSub{
+    float:right;
+    font-size:16px;
+    border: none;
+    color: white;
+    line-height: 30px;
+    width: 60px;
+    margin-right: 45px;
+    margin-top: 10px;
+}
+.layui-layer-title{
+    font-size:16px !important;
+}
+.aSelect{
+    height:34px;
+    float:right;
+    font-size:14px;
+    width:100px; 
+}
+.rForm input{
+    height:34px;
+    width:60%;
+    border:1px solid #938a8a;
+    padding-left:10px;
+    outline:none;
+}
+.rForm{
+    /*line-height:34px;*/
+    width:100%;
+    margin-bottom:20px !important;
+}
+.rForm ::-webkit-input-placeholder{
+    font-size:14px;
+    /*color:#938a8a;*/
+}  
+ .rForm span{
+    width:80px;
+    display:inline-block;  
+}
+.aHead{
+    height: 30px;
+    /*margin: 15px 0px;*/
+}
+.error{
+    color:red;
+    font-size:14px;
+    line-height: 30px;
+}
+/*.r, .r1{
+    line-height:45px;
+}*/
+.required{
+    color:red;
+    font-size:16px;
+    float:right;
+    margin-top:5px;
+    line-height:34px;
+}
+.r input{
+    width:72%;
+}
+.c{
+    margin-left:36px;
+}
+.b{
+    margin-top:10px;
+}
+.empty{
+    line-height:40px;
+    text-align:center;
+    margin:0px;
+}
+.sError{
+    line-height:34px;
+}
+.sError ul li{
+    font-size:14px;
+    color:red;
+}
+.message {
+    color: red;
+    font-size: 12px;
+    width: auto !important;
+}
+.message span{
+    width: auto !important;
+}
+.aInput{
+    width:300px !important;
+}
+.addD{
+    width:300px;
+    float:left;
+}
+.aLabel{
+    float:left;
+    width:110px;
+    margin-left:29px;
+    font-size:15px;
+}
+.aForm{
+    line-height:34px;
+    width:100%;
+    height:34px;
+    margin-bottom:30px !important;
+}
+.addF{
+    margin-top:30px;
+}

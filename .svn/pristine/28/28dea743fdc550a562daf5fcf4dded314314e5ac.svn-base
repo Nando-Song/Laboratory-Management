@@ -1,0 +1,113 @@
+﻿using LABMANAGE.Service.Login;
+using LABMANAGE.Service.Login.Dto;
+using LABMANAGE.UntityCode;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace LABMANAGE.Controllers
+{
+    public class LoginController : Controller
+    {
+        //
+        // GET: /Login/
+        public ILoginService LoginService { get; set; }
+
+        public ActionResult Login()
+        {
+            return View();
+        }
+        public ActionResult GetBackPwd()
+        {
+            return View();
+        }
+        public ActionResult LoginSubmit(string username, string password ,string remember)
+        {
+            LoginBaseDto d1 = LoginService.Get(username,password);
+            if (d1 != null)
+            {
+                if (d1.IsExamine == "False")
+                {
+                    ViewBag.Title = "您尚未通过审核";
+                    return View("Login");
+                }
+                else
+                {
+                    if (remember == "true")
+                    {
+                        HttpCookie Cookie = new HttpCookie("Username");
+                        Cookie.Expires = DateTime.Now.AddDays(3);
+                        Cookie.Value = username;
+                        Response.AppendCookie(Cookie);
+                    }
+                    //Session["userbase"] = d1;
+                    UserInfo user = new UserInfo();
+                    user.ID = d1.ID;
+                    user.userName = d1.Name;
+                    user.RealName = d1.Real_Name;
+                    user.Email = d1.Email;                    
+                    user.Image = d1.Image;
+                    user.RoleId = d1.U_Role;
+                    user.RoleCode = d1.Code;
+                    user.motto = d1.Motto;
+                    user.Regist_Time = d1.Register_Time;
+                    LoginBase.SetSession(user);
+
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+            ViewBag.Title = "用户名或密码错误";
+            return View("Login");
+        }
+        public ActionResult GetBackPwdSubmit(string username,string Realname,string phone,string Email)
+        {
+            LoginBaseDto d2 = LoginService.GetPwd(username, Realname,phone,Email);
+            string Pwd = d2.Password;
+            if (d2 != null)
+            {
+                string name = GetConfig("user");
+                string mia = GetConfig("pass");
+                System.Net.Mail.SmtpClient client = new System.Net.Mail.SmtpClient();
+                client.Host = "smtp.163.com";//使用163的SMTP服务器发送邮件
+                client.UseDefaultCredentials = true;
+                client.DeliveryMethod = System.Net.Mail.SmtpDeliveryMethod.Network;
+                client.Credentials = new System.Net.NetworkCredential(name, mia);//163的SMTP服务器需要用163邮箱的用户名和密码作认证，如果没有需要去163申请个,
+                System.Net.Mail.MailMessage Message = new System.Net.Mail.MailMessage();
+                Message.From = new System.Net.Mail.MailAddress(name);//这里需要注意，163似乎有规定发信人的邮箱地址必须是163的，而且发信人的邮箱用户名必须和上面SMTP服务器认证时的用户名相同
+                //因为上面用的用户名abc作SMTP服务器认证，所以这里发信人的邮箱地址也应该写为abc@163.com
+                Message.To.Add(Email);//将邮件发送给QQ邮箱
+                Message.Subject = "实验室管理系统密码找回";
+                Message.Body = "您的登录密码是："+Pwd;
+                Message.SubjectEncoding = System.Text.Encoding.UTF8;
+                Message.BodyEncoding = System.Text.Encoding.UTF8;
+                Message.Priority = System.Net.Mail.MailPriority.High;
+                Message.IsBodyHtml = true;
+                client.Send(Message);
+                ViewBag.Title = "密码已发送至您的邮箱，请注意查看";
+            }
+            else { 
+                ViewBag.Title = "信息填写错误";
+              }
+               return View("GetBackPwd");
+              
+        }
+        public string GetConfig(string str)
+        {
+            foreach (string key in ConfigurationManager.AppSettings)
+            {
+                if (key == str)
+                    return ConfigurationManager.AppSettings[str];
+            }
+            return "";
+        }
+        public ActionResult Logout()
+        {
+            LoginBase.logoutSession();
+            return View("Login");
+        }
+	}
+}

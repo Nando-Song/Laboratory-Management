@@ -1,0 +1,157 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace LABMANAGE.UntityCode
+{
+    public class LoginBase
+    {
+
+        public static UserInfo UserInfo
+        {
+            get
+            {
+                return HttpContext.Current.Session["userbase"] as UserInfo;
+            }
+            set
+            {
+                HttpContext.Current.Session["userbase"] = value;
+            }
+        }
+        /// <summary>
+        /// 用户名
+        /// </summary>
+        public static string username
+        {
+            get {
+                if (HttpContext.Current.Session["userbase"] != null)
+                {
+                    return UserInfo.userName;
+                }
+                return string.Empty;
+            }
+        }
+        public static int IsNotice
+        {
+            get
+            {
+                if (HttpContext.Current.Session["userbase"] != null)
+                {
+                    return UserInfo.IsNotice;
+                }
+                return 0;
+            }
+        }
+        /// <summary>
+        /// 用户真实姓名
+        /// </summary>
+        public static string RealName
+        {
+            get
+            { 
+                if(HttpContext.Current.Session["userbase"] !=null)
+                {
+                    return UserInfo.RealName;
+                }
+                return string.Empty;
+            }
+        }
+
+        public static string ID
+        {
+            get
+            {
+                if (HttpContext.Current.Session["userbase"] != null)
+                {
+                    return UserInfo.ID;
+                }
+                return string.Empty;
+            }
+        }
+        public static string Email
+        {
+            get
+            {
+                if (HttpContext.Current.Session["userbase"] != null)
+                {
+                    return UserInfo.Email;
+                }
+                return string.Empty;
+            }
+        }
+        public static string RoleId
+        {
+            get
+            {
+                if (HttpContext.Current.Session["userbase"] != null)
+                {
+                    return UserInfo.RoleId;
+                }
+                return string.Empty;
+            }
+        }
+        public static string RoleCode
+        {
+            get
+            {
+                if (HttpContext.Current.Session["userbase"] != null)
+                {
+                    return UserInfo.RoleCode;
+                }
+                return string.Empty;
+            }
+        }
+        public static string Image
+        {
+            get
+            {
+                if (HttpContext.Current.Session["userbase"] != null)
+                {
+                    return UserInfo.Image;
+                }
+                return string.Empty;
+            }
+            set
+            {
+                UserInfo.Image = value;
+                HttpContext.Current.Session["userbase"] = UserInfo;
+            }
+        }
+        public static string motto
+        {
+            get
+            {
+                if (HttpContext.Current.Session["userbase"] != null)
+                {
+                    return UserInfo.motto;
+                }
+                return string.Empty;
+            }
+        }
+        public static string Register_Time
+        {
+            get
+            { 
+                if(HttpContext.Current.Session["userbase"] != null)
+                {
+                    return UserInfo.Regist_Time;
+                }
+                return string.Empty;
+            }
+        }
+        public static void SetSession(UserInfo _userinfo)
+        {
+            HttpContext.Current.Session["userbase"] = _userinfo;
+
+        }
+        //消除Session
+        public static void logoutSession()
+        {
+            HttpContext.Current.Session["userbase"] = null;
+            HttpContext.Current.Session.Remove("userbase");
+            HttpContext.Current.Session.RemoveAll(); //用于结果了所有的键值
+            HttpContext.Current.Session.Abandon();              //用于结果了当前会话
+        }
+    }
+}

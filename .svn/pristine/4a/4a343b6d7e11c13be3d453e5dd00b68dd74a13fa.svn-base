@@ -1,0 +1,88 @@
+﻿@model LABMANAGE.Service.Register.Dto.RegisterDto
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/CSS/UserManage.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap/css/bootstrap-theme.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap/css/bootstrap.css" rel="stylesheet" />
+    @*<link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">*@  
+    <title>添加教师</title>
+</head>
+<body>  
+    <form method="post" class="addF">
+        <div class="form-group aForm">
+            <label class="col-sm-2 control-label aLabel">昵称：</label>
+            <div class="col-sm-10 addD">
+                @Html.TextBoxFor(m => m.Name, new { @id = "name", @placeholder = "请填写昵称", @autocomplete = "on", @class = "form-control aInput", @type = "text" })
+                @Html.ValidationMessageFor(m => m.Name, "", new { @class = "message" })
+            </div>            
+        </div>
+        <div class="form-group aForm">
+            <label class="col-sm-2 control-label aLabel">真实姓名：</label>
+            <div class="col-sm-10 addD">
+                @Html.TextBoxFor(m => m.Real_Name, new { @id = "realName", @placeholder = "请填写真实姓名", @class = "form-control aInput", @autocomplete = "on", @type = "text" })
+                @Html.ValidationMessageFor(m => m.Real_Name, "", new { @class = "message" })
+            </div>            
+        </div>
+        <div class="form-group aForm">
+            <label class="col-sm-2 control-label aLabel">手机号码：</label>
+            <div class="col-sm-10 addD">
+                @Html.TextBoxFor(m => m.Phone, new { @id = "phoneNumber", @placeholder = "请填写手机号码", @autocomplete = "on", @class = "form-control aInput", @type = "text" })
+                @Html.ValidationMessageFor(m => m.Phone, "", new { @class = "message" })
+            </div>            
+        </div>
+        <div class="form-group aForm">
+            <label class="col-sm-2 control-label aLabel">邮箱：</label>
+            <div class="col-sm-10 addD">
+                @Html.TextBoxFor(m => m.Email, new { @id = "email", @placeholder = "请填写邮箱", @autocomplete = "on", @type = "email", @class = "form-control aInput" })
+                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "message" })
+            </div>            
+        </div>
+        <div class="form-group aForm">
+            <label class="col-sm-2 control-label aLabel">密码：</label>
+            <div class="col-sm-10 addD">
+                @Html.PasswordFor(m => m.Password, new { @id = "password", @placeholder = "请填写密码", @type = "password", @class = "form-control aInput" })
+                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "message" })
+            </div>            
+        </div>
+        <div class="form-group aForm">
+            <label class="col-sm-2 control-label aLabel">确认密码：</label>
+            <div class="col-sm-10 addD">                
+                @Html.PasswordFor(m => m.confirm, new { @id = "confirm", @placeholder = "请确认密码", @type = "password", @class = "form-control aInput" })
+                @Html.ValidationMessageFor(m => m.confirm, "", new { @class = "message" })
+            </div>            
+        </div>
+        <div class="form-group">
+            <input type="text" value="2" name="U_Role" id="U_Role" style="display:none;" />
+            <input type="hidden" value="0" name="ID" id="id">
+            <button type="submit" class="aSub btn btn-info" style="margin-right:45px;">添加</button>
+        </div>
+        @*<div class="sError">@Html.ValidationSummary(false)</div>*@
+    </form>
+      
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    @*<script src="~/JS/Add.js"></script>*@
+    <script src="~/Content/layer/layer.js"></script>
+    <script src="@Url.Content("~/Scripts/jquery.validate.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")"></script>
+    <script type="text/javascript">
+    $(function () {
+        var msg = "@ViewBag.aMessage";
+        if (msg != "") {
+            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+            parent.layer.msg(msg, { time: 2000 });
+            parent.layer.close(index);
+            setInterval("window.location.reload();", 2000);
+        }
+    });
+    </script>
+</body>
+</html>

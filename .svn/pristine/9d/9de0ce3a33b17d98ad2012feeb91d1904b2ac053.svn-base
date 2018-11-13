@@ -1,0 +1,206 @@
+﻿@model LABMANAGE.Service.Sum.Dto.SumBaseDto     
+@using LABMANAGE.Service.Sum.Dto   
+@using LABMANAGE.UntityCode;
+@{
+    //ViewBag.Title = "Index";
+    <script src="https://cdn.ckeditor.com/4.6.2/standard/ckeditor.js"></script>
+    <link type="text/css" href="~/CSS/Summary.css" rel="stylesheet" />
+}
+<script src="~/Content/layer/layer.js"></script>
+<section class="content-header">
+    <h2>个人总结</h2>
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header" style="border-bottom: 1px solid #eee;">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div>
+                                <label>每页显示 </label>
+                                <label>
+                                    <select class="form-control" id="pageSizeSelector">
+                                        <option value="5">5</option>
+                                        <option value="10">10</option>
+                                        <option value="15">15</option>
+                                        <option value="20">20</option>
+                                    </select>
+                                </label>
+                                <label> 条</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="SearchSum">
+                                <label> 时间  </label>
+                                <label><input type="date" class="form-control" name="bday" value="" id="searchTime"></label>
+                                <label><input type="submit" value="查询" id="search_btn"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <table class="table table-striped Sumtable">
+                                <thead>
+                                    <tr>
+                                        <th>编号</th>
+                                        <th>标题</th>
+                                        <th>进度</th>
+                                        <th>遇到的问题</th>
+                                        <th>是否解决</th>
+                                        <th>评价</th>
+                                        <th>日期</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sumItem">
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="SumBtn">
+                                
+                                    @if(Convert.ToInt32(@LoginBase.ID) == @ViewBag.personId)
+                                    {
+                                        <button class="btn btn-primary" data-toggle="modal" data-target="#WrSummary" id="btn_sum">添加</button>
+                                    }                                
+                            </div>
+
+                        </div>
+                        <div class="col-sm-6 wirteSum">
+                            <div>
+                                <ul id="pagesSum" class="pagesSum">
+                                    
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    var dt = false;
+    $(function () {
+
+        var msg = "@ViewBag.Msg";
+        if (msg != "") {
+            layer.msg(msg, {time:2000});
+        }
+        var vsPage = 7;//可见页数
+        var pagesCount = 10;//总页数
+        var curPage = 1;//当前页
+        var id = "@ViewBag.PersonId";
+        $("#pageSizeSelector").change(function () {
+            $('#pagesSum').empty();
+            $('#pagesSum').removeData("twbs-pagination");
+            $('#pagesSum').unbind("page");
+            GetSumPer(1, id, false);  
+        });
+        GetSumPer(1, id, false);
+        function GetSumPer(curPage, id, flag) {
+            var nickTime = $("#searchTime").val();
+            var pageSize = $("#pageSizeSelector").val();
+            $.ajax({
+                url: "/Summary/GetSumPer",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: "{'nickTime':'" + nickTime + "','curPage':'" + curPage + "','id':'" + id + "','pageSize':'"+pageSize+"'}",
+                async: true,
+                cache: false,
+                type: "POST",
+                success: function (data) {
+                    //var pageSize = 1;
+                    var obj = JSON.parse(data);    
+                    if (obj.recordCount > pageSize) {
+                        ShowPage(obj.recordCount, pageSize, "pagesSum", curPage, flag);
+                    }
+                    var html = '';
+
+                    var index = (curPage - 1) * pageSize + 1;
+                    for (var i = 0 ; i < obj.lists.length ; i++) {
+                        var id = obj.lists[i].ID;
+                        var time = obj.lists[i].Time.replace(/T/g, ' ').split('.')[0];
+                        html += '<tr><td>' + obj.lists[i].ID + '</td><td title="'+obj.lists[i].Title+'">' + obj.lists[i].Title + '</td><td title="' + obj.lists[i].Progress + '">' + obj.lists[i].Progress + '</td><td title="' + obj.lists[i].Problem + '">' + obj.lists[i].Problem + '</td>';
+
+                        if (obj.lists[i].IS_Solve == 0)
+                            html += '<td>已解决</td>';
+                        else if (obj.lists[i].IS_Solve == 1)
+                        {
+                             html += '<td>尚未解决</td>';
+                        }
+                        else
+                            html += '<td></td>';
+
+                        if(obj.lists[i].Teacher_evaluation==null)
+                            obj.lists[i].Teacher_evaluation = "暂无";
+                        html += '<td title="' + obj.lists[i].Teacher_evaluation + '">' + obj.lists[i].Teacher_evaluation + '</td><td>' + time + '</td>';  
+                    }
+                    if (obj.lists.length == 0) {
+                        $("#pagesSum").empty();
+                        html = '<p>暂无相关总结</p>';
+                    }
+                    $("#btn_sum").on("click", function () {
+                        //var id = $(this).attr("id");
+                        openAddSum();
+                    });
+                    $("#sumItem").empty().html(html);
+                    $("#search_btn").unbind();
+                    $("#search_btn").on("click", function () {
+                        $("#pagesSum").empty();
+                        $("#pagesSum").removeData("twbs-pagination");
+                        $("#pagesSum").unbind("page");
+                        GetSumPer(1, "@ViewBag.PersonId", false);
+                    });
+                },
+                error: function (data) {
+                    alert("出现未知错误,请联系管理员!");
+                }
+            });
+        }
+
+
+        function ShowPage(count, pageSize, id, curPage, flag) {
+            pagesCount = Math.floor(count / pageSize) + (count % pageSize == 0 ? 0 : 1);
+            vsPage = 7;
+            vsPage = pagesCount > vsPage ? vsPage : pagesCount;
+            $('#' + id).twbsPagination({
+                totalPages: pagesCount,
+                visiblePages: vsPage,
+                startPage: curPage,
+                version: '1.1',
+                onPageClick: function (event, page) { //点击分页回调函数
+                    $('#' + id).find(".page").removeClass("active");
+                    $('#' + id).find(".page[data-page='" + page + "']").addClass("active");
+                    if (flag != false || flag == undefined) {
+                         GetSumPer(page, "@ViewBag.PersonId", true);
+                    }
+                    else {
+                        flag = true;
+                    }
+                }
+            });
+        }
+
+    });
+    function openAddSum() {
+        var id =  new Number(@LoginBase.ID);
+        //iframe层
+        layer.open({
+            type: 2,
+            title: '添加总结',
+            shadeClose: true,
+            shade: 0.8,
+            area: ['700px', '450px'],
+            content: ['/Summary/AddSum?id='+ id +"&flag=false", 'no'] //iframe的url
+        });
+    }
+</script>
+<script src="~/Scripts/jquery.twbsPagination.js"></script>
+

@@ -1,0 +1,115 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using LABMANAGE.UntityCode
+@using LABMANAGE.Service.ysl_Sign_In.Dto
+<link href='~/Content/plugins/fullcalendar/fullcalendar.min.css' rel='stylesheet' />
+<script src="~/Content/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script src="~/JS/moment.min.js"></script>
+<script src='~/Content/plugins/fullcalendar/fullcalendar.min.js'></script>
+<!-- Theme style -->
+<script>
+
+    $(document).ready(function () {
+        
+        $('#calendar').fullCalendar({
+
+            header: {
+                left: 'prevYear,nextYear',
+                center: 'title',
+                right: ' today prev,next'
+            },
+            aspectRatio:2,
+            monthNames: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+            monthNamesShort: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+            dayNames: ['星期天', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
+            dayNamesShort: ['周日', '周一', '周二', '周三', '周四', '周五', '周六'],
+            editable: false,//可以拖动
+        });
+
+    });
+    $(function  () {
+        $.ajax({
+            url: "/ysl_Sign_In/Sign_json",
+            success: function (result) {
+                var json = eval("(" + result + ")");
+                for (var item in json) {
+                    $("#calendar").fullCalendar('renderEvent', json[item], true);
+                }
+            },
+            error: function (result) {
+                layer.alert("读取信息错误010--------------------kylin");
+            }
+        });
+    });
+    function userdata() {
+        //获取被选中的option标签  
+        var UID = $('#userselect option:selected').val();
+        var type = $('#typeselect option:selected').val();
+
+        $.ajax({
+            url: "/ysl_Sign_In/changeuser",
+            //async: false,//请求是否异步，默认异步;
+            type: "POST",
+            dataType: 'json',
+            data: {
+                "UID": UID, //用户名&邮箱
+                "type": type,//内容
+            },
+            success: function (result) {
+                $('#calendar').fullCalendar('removeEvents');
+                $('#calendar').fullCalendar('refetchEvents');
+                var json = eval("(" + result + ")");
+                for (var item in json) {
+                    $("#calendar").fullCalendar('renderEvent', json[item], true);
+                }
+            },
+            error: function (result) {
+                layer.alert("读取信息错误02--------------------kylin");
+            }
+        });
+    }
+
+</script>
+<style>
+    #calendar {
+        max-width: 90%;
+        margin: 0 auto;
+    }
+    .fc-day{
+        height: 80px !important;
+    }
+</style>
+<div class="">
+    <div class="row">
+        <div class="col-md-12">
+            <div style="margin-left:5%; float:left; height:20px;">
+                选择你要查看的用户：
+                <select id="userselect" onchange="userdata()">
+                    @{
+                        List<User_name_uidDto> list = TempData["list"] as List<User_name_uidDto>;
+                        foreach(var item in list){
+                            if (@item.ID == int.Parse(LoginBase.ID))
+                            {
+                                <option value="@item.ID" selected="selected">@item.Real_Name</option>
+                            }
+                            else
+                            {
+                                <option value="@item.ID">@item.Real_Name</option>
+                            }
+                        }
+                    }
+                </select>
+            </div>
+            <div style="margin-right:5%; float: right; height: 20px;">
+                选择你要查看的类型：
+                <select id="typeselect" onchange="userdata()">
+                    <option value="1">网站签到</option>
+                    <option value="2">指纹机考勤</option>
+                </select>
+            </div>
+            <div id="calendar" style="margin-top:40px; background-color:white; "></div>
+        </div>
+    </div>
+</div>

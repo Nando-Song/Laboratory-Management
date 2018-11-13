@@ -1,0 +1,85 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using LABMANAGE.UntityCode
+@using LABMANAGE.Service.ysl_Sign_In.Dto
+<link href='~/Content/plugins/fullcalendar/fullcalendar.min.css' rel='stylesheet' />
+<script src="~/JS/moment.min.js"></script>
+<script src='~/Content/plugins/fullcalendar/fullcalendar.min.js'></script>
+<script src="~/JS/Ysl_Sign_Show.js"></script>
+<!-- Theme style -->
+<style>
+    #calendar {
+        max-width: 90%;
+        margin: 0 auto;
+    }
+    .fc-day{
+        height: 80px !important;
+    }
+</style>
+<div>
+    <div class="row">
+        <div class="col-md-12">
+            <div style="margin-left: 5%; float: left; height: 20px; top: 10px;">
+                选择你要查看的用户：
+                <select id="userselect" onchange="userdata()">
+                    @{
+                        if (LoginBase.RoleCode != "R003")
+                        {
+                            <option value="@LoginBase.ID">@LoginBase.RealName</option>
+                        }
+                        List<User_name_uidDto> list = TempData["list"] as List<User_name_uidDto>;
+                        foreach(var item in list){
+                            if (@item.ID == int.Parse(LoginBase.ID))
+                            {
+                                <option value="@item.ID" selected="selected">@item.Real_Name</option>
+                            }
+                            else
+                            {
+                                <option value="@item.ID">@item.Real_Name</option>
+                            }
+                        }
+                    }
+                </select>
+            </div>
+            <div style="margin-right:5%; float: right; height: 20px; top:10px;">
+                选择你要查看的类型：
+                <select id="typeselect" onchange="userdata()">
+                    <option value="1">网站签到</option>
+                    <option value="2">指纹机考勤</option>
+                </select>
+            </div>
+            <div id="calendar" style="margin-top:40px; background-color:white; "></div>
+        </div>
+        @{
+            if (LoginBase.RoleCode != "R003")
+            {
+                <div class="col-md-12" style="margin-left: 6%; margin-top: 20px; width: 88%; background-color: white; float:left;">
+                    <h3>在这里导入考勤机中的数据（请将格式转化为 .xlsx）</h3>
+                    <form target="frm" action="/YSL_Sign_In/upFile" method="post" enctype="multipart/form-data">
+                        <input id="inpufile" type='file' name="file" style="float:left;" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+                        <input type="submit" value="提交" style="margin-bottom:10px;"></input>
+                    </form>
+                    <iframe id='frm' name='frm' style="display:none;"></iframe>
+                    
+                    <script type="text/javascript">
+                        function callback(res) {
+                            layer.alert(res);
+                        }
+                        var frm = $("#frm");
+                        frm.load(function () {
+                            var wnd = this.contentWindow;
+                            var str = $(wnd.document.body).html();
+                            var obj = document.getElementById('inpufile');
+                            obj.outerHTML = obj.outerHTML;
+                            callback(str);
+                        });
+                    </script>
+                
+                 </div>
+            }
+        }
+        
+    </div>
+</div>

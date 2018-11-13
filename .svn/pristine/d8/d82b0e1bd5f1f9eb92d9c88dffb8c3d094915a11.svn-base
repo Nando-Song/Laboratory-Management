@@ -1,0 +1,70 @@
+﻿body {
+    background:#2E363F;
+}
+.login-logo b {
+    color:#fff;
+}
+#formbx .add-on {
+        width: 50px;
+        height: 40px;
+        display: block;
+        float: left;        
+    }
+#formbx .lx {
+     background-color: #28b779;
+}
+#formbx i {
+        color: #fff;
+        margin: 12px 18px;
+        font-size:16px;
+    }
+.controls input {
+    height:40px;
+    width:240px;
+    padding: 8px 13px;
+}
+.control-group {
+    margin-bottom:25px;
+}
+.control-group .ly {
+    background-color:#ffb848;
+}
+#formbx .lm {
+    background-color:#e27f7f;
+}
+.control-group .input {
+    margin-left:0px !important;
+}
+.lh {
+    background-color:#74d7ce;
+}
+.checkbox a {
+    float:right;
+}
+.action {
+        border-top: 1px solid #d2d6de;
+        padding: 23px;
+}
+.action .right {
+    float:right;    
+}
+#v_container {
+    width: 80px;
+    height: 40px;
+    float:right;
+    margin-right:26px;
+}
+#inputCheck {
+    width:160px;
+}
+.error {
+     color:#e27f7f;
+    }
+.sidebar-menu li a {
+    padding: 14px 20px 14px 25px;
+    font-size:18px;
+}
+    .sidebar-menu li a i {
+        font-size:14px;
+    }
+

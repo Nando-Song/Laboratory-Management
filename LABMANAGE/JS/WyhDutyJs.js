@@ -1,0 +1,137 @@
+﻿$(function () {
+    //添加  开始时间
+    $("#datepickerStart").datepicker({
+        changeMonth: true,
+        changeYear: true,
+        showButtonPanel: true
+    });
+
+    $("#datepickerStart").datepicker("option", "showAnim", "clip");
+    $("#datepickerStart").datepicker("option", "dateFormat", "yy-mm-dd");
+    //添加 结束时间
+    $("#datepickerEnd").datepicker({
+        changeMonth: true,
+        changeYear: true,
+        showButtonPanel: true
+    });
+
+    $("#datepickerEnd").datepicker("option", "showAnim", "clip");
+    $("#datepickerEnd").datepicker("option", "dateFormat", "yy-mm-dd");
+    //删除  开始时间
+    $("#datepickerDelStart").datepicker({
+        changeMonth: true,
+        changeYear: true,
+        showButtonPanel: true
+    });
+
+    $("#datepickerDelStart").datepicker("option", "showAnim", "clip");
+    $("#datepickerDelStart").datepicker("option", "dateFormat", "yy-mm-dd");
+});
+
+$(document).ready(function () {
+    $('#calendar').fullCalendar({//初始化日历
+        header: {
+            left: 'prevYear,nextYear',
+            center: 'title',
+            right: ' today prev,next'
+        },
+        editable: false,//是否拖动
+        weekends: true //是否显示周末（）如果false只显示周一---->周五
+    });
+    //$('#calendar').fullCalendar('next');//打开界面从下个时间段开始显示（用月表示，现在四月，打开就是五月）
+
+});
+
+//读取值日 人员信息（始末时间 真实姓名）
+$(function () {
+    $.ajax({
+        url: "/WyhDuty/GetDutyData",
+        success: function (result) {
+            var json = eval("(" + result + ")");
+            for (var item in json) {
+                $("#calendar").fullCalendar('renderEvent', json[item], true);
+            }
+        },
+        error: function (result) {
+            layer.msg("读取信息错误");
+        }
+    });
+});
+
+//添加值日信息
+function AddDuty() {
+    var oDutyStart = document.getElementById('datepickerStart').value;
+    var oDutyEnd = document.getElementById('datepickerEnd').value;
+    var oDutyId = $('#AddSelect option:selected').val();
+
+    $.ajax({
+        url: "/WyhDuty/InsertDuty",
+        dataType: 'json',
+        data: {
+            "DutyStart": oDutyStart,
+            "DutyEnd": oDutyEnd,
+            "User_ID": oDutyId
+        },
+        async: false,//请求是否异步，默认异步;
+        type: "POST",
+        success: function (result) {
+
+            if (result == "true") {
+                layer.msg("添加成功！");
+                setTimeout(function () { location.reload(); }, 100);
+            }
+            else {
+                layer.msg("添加失败！ 请输入正确的日期格式^_^");
+            }
+        },
+        error: function (result) {
+            layer.layer.msg("添加失败！ 请联系管理员");
+        }
+    });
+}
+
+//删除值日信息
+function DelDuty() {
+    var oDutyDelStart = document.getElementById('datepickerDelStart').value;
+    var oDutyId = $('#DelSelect option:selected').val();
+
+    $.ajax({
+        url: "/WyhDuty/DelDuty",
+        dataType: 'json',
+        data: {
+            "DutyStart": oDutyDelStart,
+            "User_ID": oDutyId
+        },
+        async: false,//请求是否异步，默认异步;
+        type: "POST",
+        success: function (result) {
+            if (result == "true")
+            {
+                layer.msg("删除成功！");
+                setTimeout(function () { location.reload(); }, 100);
+            }
+            else {
+                layer.msg("删除失败！ 找不到此条数据");
+            }
+            
+            //请求成功处理
+        },
+        error: function (result) {
+            layer.layer.msg("删除失败！ 查无此条数据！");
+        }
+    });
+}
+
+
+function GetDate(date) {
+    var y = date.getFullYear();
+    var m = date.getMonth() + 1;
+    m = m < 10 ? ('0' + m) : m;
+    var d = date.getDate();
+    d = d < 10 ? ('0' + d) : d;
+    var h = date.getHours();
+    var minute = date.getMinutes();
+    minute = minute < 10 ? ('0' + minute) : minute;
+
+    return y + '-' + m + '-' + d + ' ' + h + ':' + minute;
+}

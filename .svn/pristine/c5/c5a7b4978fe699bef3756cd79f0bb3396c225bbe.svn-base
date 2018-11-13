@@ -1,0 +1,142 @@
+﻿using LABMANAGE.Data;
+using LABMANAGE.Repository;
+using LABMANAGE.Service.Sum.Dto;
+using LABMANAGE.UntityCode;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace LABMANAGE.Service.Sum
+{
+    public class SumService : ISumService
+    {
+        public IQQInvRepository<Summary> SumRepository;
+        public SumService(IQQInvRepository<Summary> _SumRepository)
+        {
+            SumRepository = _SumRepository;
+        }
+
+        public List<SumBaseDto> GetSumList(string nickName, string nickTimes, int curPage, int PageSize, out long recordCount)
+        {
+            var query = SumRepository.Query();//.OrderByDescending(a=>a.Time);
+            if (!String.IsNullOrEmpty(nickName))
+            {
+                query = query.Where(m => m.User.Real_Name == nickName);
+            }
+            if (!String.IsNullOrEmpty(nickTimes))
+            {
+                DateTime time = Convert.ToDateTime(nickTimes);
+                //query = query.Where(m => m.Start_Time.CompareTo(nickTime)>=0);
+                query = query.Where(m => m.Start_Time <= time && m.End_Time >= time);
+            }
+            recordCount = query.Count();
+            query = query.OrderByDescending(m => m.Time).Skip((curPage - 1) * PageSize).Take(PageSize);
+
+            List<SumBaseDto> SumList = query.ToList().ConvertAll(c => AutoMapperHelp.ConvertToDto<Summary, SumBaseDto>(c));
+
+            return SumList;
+        }
+        public List<SumBaseDto> GetAll(string nickName, string nickTime)
+        {
+            //var list = SumRepository.Query().OrderByDescending(a => a.Time);//时间降序
+            //List<SumBaseDto> SumList = list.ToList().ConvertAll(c => AutoMapperHelp.ConvertToDto<Summary, SumBaseDto>(c));
+            //int count = list.Count();
+            var query = SumRepository.Query();//.OrderByDescending(a => a.Time);
+            if(!String.IsNullOrEmpty(nickName))
+            {
+                query = query.Where(m=>m.User.Real_Name == nickName);
+            }
+
+            if(!String.IsNullOrEmpty(nickTime))
+            {
+                DateTime time = Convert.ToDateTime(nickTime);
+                //query = query.Where(m => m.Start_Time.CompareTo(nickTime)>=0);
+                query = query.Where(m => m.Start_Time <= time && m.End_Time >= time);
+            }
+            query = query.OrderByDescending(a=>a.Time);
+            List<SumBaseDto> SumList = query.ToList().ConvertAll(c=>AutoMapperHelp.ConvertToDto<Summary, SumBaseDto>(c));
+
+            return SumList;
+        }
+        public bool InsertSum(SumBaseDto summary)
+        {
+            try
+            {
+                Summary list = AutoMapperHelp.ConvertModel<Summary, SumBaseDto>(summary);
+                //list.Teacher_evaluation.to;
+                var date = DateTime.Now;
+                int dayweek = (int)date.DayOfWeek;
+                if (dayweek == 0) dayweek = 7;
+                DateTime startTime = date.AddDays(-(dayweek - 1));
+                DateTime endTime = date.AddDays(7 - dayweek);
+
+                DateTime time = date;
+                //string[] weekDays = { "星期天", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六" };
+                //string week = date.DayOfWeek.ToString();
+
+                //list.Time = date.ToString();
+                list.User_ID = Convert.ToInt32(LoginBase.ID);
+                list.Time = time;
+                list.Start_Time = startTime;
+                list.End_Time = endTime;
+                Summary sumDt = SumRepository.Add(list);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool Update(SumBaseDto summary)
+        {
+            try
+            {
+                Summary evaSum = SumRepository.Get(summary.TID);
+                evaSum.Teacher_evaluation = summary.Teacher_evaluation;
+                evaSum.Teacher_evaluation = System.Text.RegularExpressions.Regex.Replace(summary.Teacher_evaluation, @"<[^>]*>", "");
+                SumRepository.Update(evaSum);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+            
+            //var list = SumRepository.Query().Where(m => m.ID == id).ToList();
+            //List<SumBaseDto> SumList = list.ConvertAll(c=>AutoMapperHelp.ConvertToDto<Summary, SumBaseDto>(c));
+            ////RegisterDto tt = infoList.FirstOrDefault();
+            ////User ss = AutoMapperHelp.ConvertModel<User, RegisterDto>(tt);
+            //SumBaseDto sumEva = SumList.FirstOrDefault();
+            //sumEva.Teacher_evaluation = summary.Teacher_evaluation;
+            //Summary evaList = AutoMapperHelp.ConvertModel<Summary, SumBaseDto>(sumEva);
+            //Summary sumDt = SumRepository.Update(evaList);
+        }
+
+        //public List<SumBaseDto> GetOnePerson(int id)
+        //{
+        //    var list = SumRepository.Query().Where(m=>m.User_ID == id);
+        //    List<SumBaseDto> osList = list.ToList().ConvertAll(c=>AutoMapperHelp.ConvertToDto<Summary, SumBaseDto>(c));
+        //    int count = list.Count();
+        //    return osList; 
+        //}
+        
+        public List<SumBaseDto>GetSumPer(string nickTime, int curPage, int PageSize, int id, out long recordCount)
+        {
+            var query = SumRepository.Query().Where(m=>m.User_ID == id);//.OrderByDescending(a=>a.Time);
+            if (!String.IsNullOrEmpty(nickTime))
+            {
+                DateTime time = Convert.ToDateTime(nickTime);
+                //query = query.Where(m => m.Start_Time.CompareTo(nickTime)>=0);
+                query = query.Where(m => m.Start_Time <= time && m.End_Time >= time);
+            }
+            recordCount = query.Count();
+            query = query.OrderByDescending(m => m.Time).Skip((curPage - 1) * PageSize).Take(PageSize);
+
+            List<SumBaseDto> SumList = query.ToList().ConvertAll(c => AutoMapperHelp.ConvertToDto<Summary, SumBaseDto>(c));
+
+            return SumList;
+        }
+    }
+}

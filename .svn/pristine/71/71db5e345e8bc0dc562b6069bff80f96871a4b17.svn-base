@@ -1,0 +1,97 @@
+﻿@using LABMANAGE.Service.Sum.Dto
+@model LABMANAGE.Service.Sum.Dto.SumBaseDto 
+@using LABMANAGE.UntityCode;
+@using LABMANAGE.ViewModel
+@{
+    ViewBag.Title = "Index";
+}
+<link type="text/css" href="~/CSS/Summary.css" rel="stylesheet" />
+
+<script src="~/Scripts/jquery.twbsPagination.js"></script>
+<script src="~/Content/layer/layer.js"></script>
+<script src="~/JS/Summary.js"></script>
+<section class="content-header">
+    <h2>学生总结模块</h2>
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+           
+            <div class="box">
+                <div class="box-header" style="border-bottom: 1px solid #eee;">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div>
+                                <label>每页显示 </label>
+                                <label>
+                                    <select class="form-control" id="pageSizeSelector">
+                                        <option value="5">5</option>
+                                        <option value="10">10</option>
+                                        <option value="15">15</option>
+                                        <option value="20">20</option>
+                                    </select>
+                                </label>
+                                <label> 条</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="SearchSum">
+                                <label> 姓名  </label>
+                                <label><input type="search" class="form-control" name="nickName" id="searchNames" value=""></label>&nbsp;&nbsp;
+                                <label> 时间  </label>
+                                <label><input type="date" class="form-control" name="nickTimes" id="searchTimes" value=""></label>&nbsp;&nbsp;
+                                <label><input type="button" value="查询" id="searchBtn"></label>&nbsp;&nbsp;
+                                <label><input type="button" value="导出" id="export"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>     
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <table class="table table-striped Sumtable">
+                                <thead>
+                                    <tr>
+                                        <th>学生编号</th>
+                                        <th>姓名</th>
+                                        <th>标题</th>
+                                        <th>进度</th>
+                                        <th>遇到的问题</th>
+                                        <th>是否解决</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sumItems">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">      
+                        </div>
+                        <div class="col-sm-6 wirteSum">
+                            <div>
+                                <ul id="pagesSums">
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        <input type="text" value="@LoginBase.RoleCode" style="display:none;" id="roleCode"/>
+    </div>
+</section>
+<script>
+    var msg = "@ViewBag.Msgs";
+    if (msg != "") {
+        layer.msg(msg, { time: 2000 });
+    }
+
+    @*var Exmsg = "@ViewBag.ExportMsg";
+    if (Exmsg != "") {
+        layer.msg(Exmsg, {time: 2000 });
+    }*@
+</script>
+

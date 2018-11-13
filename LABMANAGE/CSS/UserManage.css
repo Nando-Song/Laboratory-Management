@@ -1,0 +1,234 @@
+﻿body{
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+.manage{
+    margin:0px 15px;
+    padding:0px;
+}
+.manage .content-header{
+    padding-left:0px !important;
+}
+.mTitle{
+    padding:0px;
+    margin:0px;
+}
+#search{
+    border-radius:5px;
+    width:70% !important;
+}
+.sea{
+    margin-left:10px;
+}
+.mLabel{
+    line-height:35px;
+    padding-right:5px !important;
+    text-align:right;
+}
+.manageBody{
+    margin-top:15px;
+    background-color:#ffffff;
+    border-top: 3px solid #d2d6de;
+}
+.mtable{
+    border-top:2px solid #F4F4F4;
+    border-bottom:1px solid #F4F4F4;
+}
+.mtable tr:nth-child(2n-1){
+    background-color: #f9f9f9;
+}
+.mtable tr:nth-child(n):hover{
+    background-color: #e9e9e9;
+}
+.mtable thead tr th{
+    text-align:center;
+}
+.mtr{
+    background:none !important;
+}
+.mtable tbody tr td{
+    text-align:center;
+    line-height:40px;
+}
+.mBodyHead{
+    margin:15px 15px;
+}
+.mhLeft{
+    line-height:34px;
+}
+.mhLeft select{
+    width:30%;
+    border-radius:5px;
+    font-weight:bold;
+}
+.mhLeft span{
+    float:left;
+}
+.col-md-5{
+    padding-left:0px !important;
+}
+.input-group-addon{
+    background-color:#3c8dbc !important;
+    color:white !important;
+}
+.mBodyFooter{
+    margin:0px 15px 15px 15px;  
+    height:50px;
+}
+.mfLeft{
+    padding-bottom:15px;
+    width:85px !important;
+    float:left;
+}
+.mfRight{
+    float:right;
+    margin-top:-19px;
+}
+.mDelete{
+    padding:4px 10px !important;
+}
+.change{
+    margin-left:8px;
+    padding:4px 10px !important;
+}
+.aDiv{
+    margin:0 auto;
+    width:345px;
+}
+.aTable input{
+    width:250px;
+    height:30px;
+}
+.aTable tr td{
+    line-height:50px;
+    font-size:16px;
+}
+.aSub{
+    float:right;
+    font-size:16px;
+    border: none;
+    color: white;
+    line-height: 30px;
+    width: 60px;
+    margin-right: 45px;
+    margin-top: -1px;
+}
+.layui-layer-title{
+    font-size:16px !important;
+}
+.aSelect{
+    height:34px;
+    float:right;
+    font-size:14px;
+    width:100px; 
+}
+.rForm input{
+    height:34px;
+    width:60%;
+    border:1px solid #938a8a;
+    padding-left:10px;
+    outline:none;
+}
+.rForm{
+    width:100%;
+    margin-bottom:20px !important;
+}
+.rForm ::-webkit-input-placeholder{
+    font-size:14px;
+}  
+.rForm span{
+    width:80px;
+    display:inline-block;  
+}
+.aHead{
+    height: 30px;
+}
+.error{
+    color:red;
+    font-size:14px;
+    line-height: 30px;
+}
+.required{
+    color:red;
+    font-size:16px;
+    float:right;
+    margin-top:5px;
+    line-height:34px;
+}
+.r input{
+    width:72%;
+}
+.c{
+    margin-left:36px;
+}
+.b{
+    margin-top:10px;
+}
+.empty{
+    line-height:40px;
+    text-align:center;
+    margin:0px;
+}
+.sError{
+    line-height:34px;
+}
+.sError ul li{
+    font-size:14px;
+    color:red;
+}
+.message {
+    color: red;
+    font-size: 12px;
+    width: auto !important;
+}
+.message span{
+    width: auto !important;
+}
+.aInput{
+    width:300px !important;
+}
+.addD{
+    width:300px;
+    float:left;
+}
+.aLabel{
+    float:left;
+    width:110px;
+    margin-left:29px;
+    font-size:15px;
+}
+.aForm{
+    line-height:34px;
+    width:100%;
+    height:34px;
+    margin-bottom:30px !important;
+}
+.addF{
+    margin-top:30px;
+}
+.room{
+    margin-left:10px;
+}
+#room{
+    width:300px;
+    padding-left:6px;
+}
+#Room_ID{
+    padding-left:9px;
+}
+.group{
+    padding-left:0px !important;
+}
+.rGroup{
+    height:39px !important;
+    line-height:39px !important;
+    margin-top:10px;
+}
+.rForm{
+    width:100%;
+    margin-bottom:20px !important;
+    line-height:35px !important;
+    height:39px;
+}
+.mCheck{
+    padding:4px 10px !important;
+}

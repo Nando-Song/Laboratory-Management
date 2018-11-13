@@ -1,0 +1,85 @@
+﻿@model LABMANAGE.Service.Login.Dto.LoginBaseDto
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/Content/bootstrap/css/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/CSS/Login.css" rel="stylesheet" />
+    <link href="~/Content/dist/css/AdminLTE.min.css" rel="stylesheet" />
+    <script src="~/Content/plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Content/gVerify/gVerify.js"></script>
+    <title>登录</title>
+</head>
+<body>
+    <div class="login-box">
+        <div class="login-logo">
+            <b>实验室管理系统</b>
+        </div>
+        <div class="login-box-body" id="formbx">
+            <form action="/Login/LoginSubmit" method="post" onsubmit="return Check()">
+                <div class="control-group">
+                    <div class="controls">
+                        <span class="add-on lx"><i class="fa fa-user"></i></span>
+                        <input type="text" id="inputName" name="username" placeholder="用户名" value="@(Request.Cookies["Username"] == null? "" : Request.Cookies["Username"].Value)">
+                        @*@if (Request.Cookies["Username"] != null)
+                        {
+                            @Request.Cookies["Username"].Value;
+                        }*@                        
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <span class="add-on ly "><i class="fa fa-lock"></i></span>
+                        <input type="password" id="inputPassword" name="password" placeholder="密码" value="">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <span class="add-on lm "><i class="fa fa-check-square"></i></span>
+                        <input type="text" id="inputCheck" name="check" placeholder="验证码">
+                        <div id="v_container"></div>
+                    </div>
+                </div>
+                <div class="control-group" style="margin-bottom: 5px;">
+                    <div class="checkbox">
+                        <input class="input" type="checkbox" name="remember"  value="true" />
+                        <label>记住我</label>
+                        <a href="GetBackPwd">忘记密码？</a>
+                    </div>
+                </div>
+                <div class="error"><p>@ViewBag.Title</p></div>
+            <div class="action">
+                <span class="left"><a href="/Register/Register"><input type="button" value="注册" class="btn btn-info"></a></span>
+                <span class="right"><input type="submit" value="登录" class="btn btn-success"></span>
+            </div>                
+                </form>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function Check() {
+             var res = verifyCode.validate($("#inputCheck").val());
+             if (res == true) {
+                 $(".error").html("");
+                 return true;
+             }
+             else {
+                 $(".error").html("验证码错误");
+                 return false;
+             }
+
+        }
+
+        window.onload = function () {
+            verifyCode = new GVerify("v_container");
+        };
+    </script>
+</body>
+</html>

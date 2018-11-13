@@ -1,0 +1,97 @@
+﻿@using LABMANAGE.Service.Sum.Dto
+@model LABMANAGE.Service.Sum.Dto.SumBaseDto
+@using LABMANAGE.UntityCode;
+@{
+    Layout = null;
+}
+<script src="~/Content/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<link type="text/css" href="~/CSS/Summary.css" rel="stylesheet" />
+<link type="text/css" href="~/Content/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+</head>
+<body>
+    @using (Html.BeginForm("Person", "Summary", FormMethod.Post))
+    { 
+        <input type="hidden" value="@ViewBag.PersonId" id="personId" name="personId" />
+        <input type="hidden" value="@ViewBag.Mssg" id="Mssg"/>
+        <div>
+            <div class="form-group container" style="margin-top:10px;">
+                <div class="row">
+                    <label for="title" class="control-label col-sm-2">学习/工作内容</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" id="title" name="Title" placeholder="请输入标题" required />
+                        <span id="titleWran"></span>
+                    </div>
+                </div>
+                <div class="row" style="margin-top:7px;">
+                    <label for="descript" class="control-label col-sm-2">学习/工作情况简介</label>
+                    <div class="col-sm-8">
+                        <textarea id="progress" name="Progress" placeholder="请描述学习情况" required></textarea>
+                    </div>
+                </div>
+                <div class="row" style="margin-top:7px;">
+                    <label for="IsSolve" class="control-label col-sm-2">是否有问题</label>
+                    <div class="col-sm-8">
+                        <div class="radio col-sm-4" style="float:left;">
+                            <label>
+                                <input type="radio" name="Have_P" id="optionsRadioY" value="0" checked onclick="Display('optionsRadioY');"> 是
+                            </label>
+                        </div>
+                        <div class="radio col-sm-4" style="float: left; margin-top: 9px;">
+                            <label>
+                                <input type="radio" name="Have_P" id="optionsRadioN" value="1" onclick="Display('optionsRadioN');"> 否
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-top:7px;" id="problemT">
+                    <label for="problem" class="control-label col-sm-2">遇到的问题</label>
+                    <div class="col-sm-8">
+                        <textarea id="problem" name="Problem" placeholder="请输入遇到的问题"></textarea>
+                    </div>
+                </div>
+                <div class="row" style="margin-top:7px;">
+                    <label for="IsSolve" class="control-label col-sm-2">是否解决</label>
+                    <div class="col-sm-8">
+                        <div class="radio col-sm-4" style="float:left;">
+                            <label>
+                                <input type="radio" name="IS_Solve" id="optionsRadio0" value="0"> 是
+                            </label>
+                        </div>
+                        <div class="radio col-sm-4" style="float: left; margin-top: 9px;">
+                            <label>
+                                <input type="radio" name="IS_Solve" id="optionsRadios1" value="1" checked> 否
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="sfooter">
+            <button type="button" class="btn btn-default" id="btnA">关闭</button>
+            <button type="submit" class="btn btn-primary subSummary">提交</button>
+        </div>
+    }
+    <script src="~/JS/AddSum.js"></script>
+    <script>
+        function Display(id) {
+            var s = $("#" + id).val();
+            if (s == 1) {
+                $("#problemT").css("display", "none");
+                $("#progress").css("height", "35%");
+            }
+            else {
+                $("#problemT").css("display", "block");
+                $("#progress").css("height", "20%");
+            }
+        };
+    </script>
+</body>
+</html>

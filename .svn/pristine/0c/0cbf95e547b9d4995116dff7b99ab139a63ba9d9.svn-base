@@ -1,0 +1,49 @@
+﻿body {
+}
+
+.SearchSum{
+    text-align:right;
+}
+
+.Sumtable tr th{
+    text-align:center;
+}
+
+.SumBtn{
+    margin-top:20px;
+}
+
+.wirteSum{
+   text-align:right;
+}
+
+.Sumtable{
+    table-layout:fixed;
+}
+
+.Sumtable td{
+    text-align:center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.sfooter{
+    text-align: center;
+}
+
+.btnt{
+    padding: 5px 10px;
+    border: none;
+    border-radius: 3px;
+}
+
+@media screen and (max-width: 767px){
+    .box-header .row div{
+        text-align:center;
+    }
+    .box-body .row div{
+        text-align:center;
+    }
+}
+

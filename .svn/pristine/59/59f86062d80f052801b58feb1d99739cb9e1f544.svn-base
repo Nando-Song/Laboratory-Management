@@ -1,0 +1,92 @@
+﻿using LABMANAGE.Data;
+using LABMANAGE.Repository;
+using LABMANAGE.Service.leave.Dto;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace LABMANAGE.Service.leave
+{
+    public class LeaveService : ILeaveService
+    {
+        public IQQInvRepository<Leave> LeaveRepository;
+        public LeaveService(IQQInvRepository<Leave> _LeaveRepository)
+        {
+            LeaveRepository = _LeaveRepository;
+        }
+        public List<Dto.LeaveBaseDto> GetAll()
+        {
+            var list = LeaveRepository.Query();
+            List<LeaveBaseDto> qqList = list.ToList().ConvertAll(c => AutoMapperHelp.ConvertToDto<Leave, LeaveBaseDto>(c));
+            LeaveBaseDto tt = qqList.FirstOrDefault();
+            //Leave ss = AutoMapperHelp.ConvertModel<Leave, LeaveBaseDto>(tt);
+            // 反向转换为Mode
+            int count = list.Count();
+            return qqList;
+        }
+
+
+        public bool InsertInfo(LeaveBaseDto Leaveinfo)
+        {
+            try
+            {
+                Leave uList = AutoMapperHelp.ConvertModel<Leave, LeaveBaseDto>(Leaveinfo);
+                Leave insertList = LeaveRepository.Add(uList);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public List<LeaveBaseDto> GetLeaveList(string nickName, string nickTime, int curPage, int PageSize, int LoginID, out long recordCount)
+        {
+            
+            var query = LeaveRepository.Query();//.OrderByDescending(a=>a.Time);
+            if(LoginID != 0)
+            {
+                query = query.Where(m => m.User_ID == LoginID);
+            }
+            if (!String.IsNullOrEmpty(nickName) && nickName != "undefined")
+            {
+                query = query.Where(m => m.User.Real_Name == nickName);
+            }
+            if (!String.IsNullOrEmpty(nickTime) && nickTime != "undefined")
+            {
+                DateTime time = Convert.ToDateTime(nickTime);
+                query = query.Where(m => m.Start_Time <= time && m.End_Time >= time);
+            }
+            recordCount = query.Count();
+            query = query.OrderByDescending(m => m.ID).Skip((curPage - 1) * PageSize).Take(PageSize);
+
+            List<LeaveBaseDto> LeaveList = query.ToList().ConvertAll(c => AutoMapperHelp.ConvertToDto<Leave, LeaveBaseDto>(c));
+
+            return LeaveList;
+        }
+
+        public bool Update(LeaveBaseDto leave)
+        {
+            try
+            {
+                Leave evaLeave = LeaveRepository.Get(leave.ID);
+                evaLeave.IsExamine = leave.IsExamine;
+                evaLeave.Pass = leave.Pass;
+                LeaveRepository.Update(evaLeave);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        public LeaveBaseDto GetLeavePer(int id)
+        {
+            var list = LeaveRepository.Query().Where(c => c.ID == id);
+            List<LeaveBaseDto> qqList = list.ToList().ConvertAll(c => AutoMapperHelp.ConvertToDto<Leave, LeaveBaseDto>(c));
+            LeaveBaseDto tt = qqList.FirstOrDefault();
+            return tt;
+        }
+    }
+}

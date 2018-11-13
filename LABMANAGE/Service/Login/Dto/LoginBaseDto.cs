@@ -1,0 +1,63 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace LABMANAGE.Service.Login.Dto
+{
+    public class LoginBaseDto
+    {
+        /// <summary>
+        /// 用户ID
+        /// </summary>
+        public string ID { get; set; }
+        /// <summary>
+        /// 用户名
+        /// </summary>
+        public string Name { get; set; }
+        /// <summary>
+        /// 手机号
+        /// </summary>
+        public string Phone { get; set; }
+        /// <summary>
+        /// 邮箱
+        /// </summary>
+        public string Email { get; set; }
+        /// <summary>
+        /// 真实姓名
+        /// </summary>
+        public string Real_Name { get; set; }
+        /// <summary>
+        /// 密码
+        /// </summary>
+        public string Password { get; set; }
+        /// <summary>
+        /// 用户角色ID
+        /// </summary>
+        public string U_Role { get; set; }
+        /// <summary>
+        /// 用户头像
+        /// </summary>
+        public string Image { get; set;}
+        /// <summary>
+        /// 是否通过审核
+        /// </summary>
+        public string IsExamine { get; set;}
+        /// <summary>
+        /// 签名
+        /// </summary>
+        public string Motto { get; set; }
+        /// <summary>
+        /// 角色
+        /// </summary>
+        public string Code { get; set; }
+        /// <summary>
+        /// 注册时间
+        /// </summary>
+        public string Register_Time { get; set; }
+       /// <summary>
+       /// 是否阅读过公告
+       /// </summary>
+        public int  IsNotice { get; set; }
+    }
+}

@@ -1,0 +1,266 @@
+﻿verifyCode = new GVerify("v_container"); //验证码
+
+var reg1 = /^[0-9]*$/; //验证是否为数字
+var reg2 = /^\w+$/;  //验证是否是字母、数字、下划线组成的字符串
+var reg3 = /^(\w|-|[\u4E00-\u9FA5])*$/; //验证是否是字母、数字、下划线、汉字组成的字符串
+var reg4 = /^1[34578]\d{9}$/; //验证手机号码
+var reg5 = /\w+[@]{1}\w+[.]\w+/; //验证邮箱
+var reg6 = /^[a-zA-Z]\w{5,18}$/; //验证密码
+var f1 = f2 = f3 = f4 = f5 = f6 = f7 = 1;
+
+function checkName(name) { //检测该昵称是否已经被注册
+    $.ajax({
+        url: "/Register/CheckName", //CheckName是controller里面对应的方法名称
+        type: "post",
+        dataType: 'json',
+        data: { "name": name },
+        success: function (result) {
+            //已经存在该名字提示用户
+            if (result == true) {
+                $(".error").html("该昵称已经被注册过或者已有账号？");
+                f1 = 0;
+                $(".r1").html("*");
+            }
+            else {
+                $(".error").html("");
+                document.getElementsByClassName("r1")[0].innerHTML = '<img src="../../images/reg_icons.png"/>';
+                $(".r1").css("margin-top", "10px");
+                f1 = 1;
+            }
+        },
+        error: function () {
+            $(".error").html("检查昵称是否存在发生错误");
+            f1 = 0;
+        }
+    });
+}
+
+function checkPhone(phone) { //检测该手机号码是否已经被注册
+    $.ajax({
+        url: "/Register/CheckPhone", 
+        type: "post",
+        dataType: 'json',
+        data: { "phone": phone },
+        success: function (result) {
+            if (result == true) {
+                $(".error").html("该手机号已经被注册过或者已有账号？");
+                f3 = 0;
+                $(".r1").html("*");
+            }
+            else {
+                $(".error").html("");
+                document.getElementsByClassName("r3")[0].innerHTML = '<img src="../../images/reg_icons.png"/>';
+                $(".r3").css("margin-top", "10px");
+                f3 = 1;
+            }
+        },
+        error: function () {
+            $(".error").html("检查手机号是否存在发生错误");
+            f3 = 0;
+        }
+    });
+}
+
+function checkEmail(email) { //检测该邮箱是否已经被注册
+    $.ajax({
+        url: "/Register/CheckEmail",
+        type: "post",
+        dataType: 'json',
+        data: { "email": email },
+        success: function (result) {
+            if (result == true) {
+                $(".error").html("该邮箱已经被注册过或者已有账号？");
+                f4 = 0;
+                $(".r1").html("*");
+            }
+            else {
+                $(".error").html("");
+                document.getElementsByClassName("r4")[0].innerHTML = '<img src="../../images/reg_icons.png"/>';
+                $(".r4").css("margin-top", "10px");
+                f4 = 1;
+            }
+        },
+        error: function () {
+            $(".error").html("检查邮箱是否存在发生错误");
+            f4 = 0;
+        }
+    });
+}
+
+$("#name").blur(function () {
+    if ($("#name").val() == "") {
+        $(".error").html("昵称不能为空");
+        $(".r1").html("*");
+        f1= 0;
+    }
+    else if (reg1.test($("#name").val()) || !reg3.test($("#name").val())) {
+        $(".error").html("昵称仅支持中英文、数字和下划线,且不能为纯数字");
+        $(".r1").html("*");
+        f1 = 0;
+    }
+    else {
+        checkName($("#name").val());
+    }
+});
+
+$("#realName").blur(function () {
+    if ($("#realName").val() == "") {
+        $(".error").html("真实姓名不能为空");
+        $(".r2").html("*");
+        f2 = 0;
+    }
+    else {
+        $(".error").html("");
+        document.getElementsByClassName("r2")[0].innerHTML = '<img src="../../images/reg_icons.png"/>';
+        $(".r2").css("margin-top", "10px");
+        f2 = 1;
+    }
+});
+
+$("#phoneNumber").blur(function () {
+    if ($("#phoneNumber").val() == "") {
+        $(".error").html("手机号码不能为空");
+        $(".r3").html("*");
+        f3 = 0;
+    }
+    else if (!reg4.test($("#phoneNumber").val())) {
+        $(".error").html("手机号码格式不正确");
+        $(".r3").html("*");
+        f3 = 0;
+    }
+    else {
+        checkPhone($("#phoneNumber").val());
+    }
+});
+
+$("#email").blur(function () {
+    if ($("#email").val() == "") {
+        $(".error").html("邮箱不能为空");
+        $(".r4").html("*");
+        f4 = 0;
+    }
+    else if (!reg5.test($("#email").val())) {
+        $(".error").html("邮箱格式不正确");
+        $(".r4").html("*");
+        f4 = 0;
+    }
+    else {
+        checkEmail($("#email").val());
+    }
+});
+
+$("#password").blur(function () {
+    if ($("#password").val() == "") {
+        $(".error").html("密码不能为空");
+        $(".r5").html("*");
+        f5 = 0;
+    }
+    else if (!reg6.test($("#password").val())) {
+        $(".error").html("密码以字母开头，长度在5-18之间，只能包含字符、数字和下划线");
+        $(".r5").html("*");
+        f5 = 0;
+    }
+    else {
+        $(".error").html("");
+        document.getElementsByClassName("r5")[0].innerHTML = '<img src="../../images/reg_icons.png"/>';
+        $(".r5").css("margin-top", "10px");
+        f5 = 1;
+    }
+});
+
+$("#confirm").blur(function () {
+    if ($("#confirm").val() == "") {
+        $(".error").html("");
+        $(".r6").html("*");
+        f6 = 0;
+    }
+    else if ($("#confirm").val() != $("#password").val()) {
+        $(".error").html("密码不一致");
+        $(".r6").html("*");
+        f6 = 0;
+    }
+    else {
+        $(".error").html("");
+        document.getElementsByClassName("r6")[0].innerHTML = '<img src="../../images/reg_icons.png"/>';
+        $(".r6").css("margin-top", "10px");
+        f6 = 1;
+    }
+})
+
+$(".rShort").blur(function () {
+    var res = verifyCode.validate($(".rShort").val());
+    if (res) {
+        $(".error").html("");
+        document.getElementsByClassName("r7")[0].innerHTML = '<img src="../../images/reg_icons.png"/>';
+        $(".r7").css("margin-top", "10px");
+        f7 = 1;
+    }
+    else {
+        $(".error").html("验证码错误");
+        $(".r7").html("*");
+        f7 = 0;
+    }
+})
+
+function CheckForm() {
+    if ($("#name").val() == "") {
+        $(".error").html("昵称不能为空");
+        $(".r1").html("*");
+        f1 = 0;
+    }
+
+    if ($("#realName").val() == "") {
+        $(".error").html("真实姓名不能为空");
+        $(".r2").html("*");
+        f2 = 0;
+    }
+
+    if ($("#phoneNumber").val() == "") {
+        $(".error").html("手机号码不能为空");
+        $(".r3").html("*");
+        f3 = 0;
+    }     
+
+    if ($("#email").val() == "") {
+        $(".error").html("邮箱不能为空");
+        $(".r4").html("*");
+        f4 = 0;
+    }
+
+    if ($("#password").val() == "") {
+        $(".error").html("密码不能为空");
+        $(".r5").html("*");
+        f5 = 0;
+    }
+
+    if ($("#confirm").val() == "") {
+        $(".error").html("");
+        $(".r6").html("*");
+        f6= 0;
+    }
+
+    if ($("#confirm").val() != $("#password").val()) {
+        $(".error").html("密码不一致");
+        $(".r5").html("*");
+        $(".r6").html("*");
+        f5 = 0;
+        f6 = 0;
+    }
+
+    var res = verifyCode.validate($(".rShort").val());
+    if (res) {
+        $(".error").html("");
+        document.getElementsByClassName("r7")[0].innerHTML = '<img src="../../images/reg_icons.png"/>';
+        $(".r7").css("margin-top", "10px");
+        f7 = 1;
+    }
+    else {
+        $(".error").html("验证码错误");
+        $(".r7").html("*");
+        f7 = 0;
+    }
+     
+    if (f1 == 1 && f2 == 1 && f3 == 1 && f4 == 1 && f5 == 1 && f6 == 1 && f7 == 1) { return true; }
+    else { $(".error").html("打*的为不合法信息，请重新填写这些信息！"); return false; }
+}
+

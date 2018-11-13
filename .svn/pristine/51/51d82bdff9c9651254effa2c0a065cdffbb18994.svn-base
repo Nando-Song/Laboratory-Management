@@ -1,0 +1,11 @@
+﻿.wyh_form {
+    border-top-color: #FFF !important;
+    /*border-radius: 0px;
+    border-top: 0px solid #000;*/
+}
+/*.wyh_form textarea{
+    height:540px;
+}*/
+.wyh_duty textarea{
+    margin-top:20px;
+}

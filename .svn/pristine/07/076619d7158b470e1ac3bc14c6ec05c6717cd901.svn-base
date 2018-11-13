@@ -1,0 +1,163 @@
+﻿@using LABMANAGE.Service.Sum.Dto
+@model LABMANAGE.Service.Sum.Dto.SumBaseDto 
+@using LABMANAGE.ViewModel
+@{
+    ViewBag.Title = "Index";
+}
+<link type="text/css" href="~/CSS/Summary.css" rel="stylesheet" />
+<script src="~/JS/Summary.js"></script>
+<script src="~/Scripts/jquery.twbsPagination.js"></script>
+<script src="~/Content/layer/layer.js"></script>
+
+<section class="content-header">
+    <h2>学生总结模块</h2>
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+           
+            <div class="box">
+                <div class="box-header" style="border-bottom: 1px solid #eee;">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            @*<div>
+                                <label>每页显示 </label>
+                                <label>
+                                    <select class="form-control">
+                                        <option value="5">5</option>
+                                        <option value="10">10</option>
+                                        <option value="15">15</option>
+                                        <option value="20">20</option>
+                                    </select>
+                                </label>
+                                <label> 条</label>
+                            </div>*@
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="SearchSum">
+                                <label> 姓名  </label>
+                                <label><input type="search" class="form-control" name="nickName" id="searchNames" value=""></label>
+                                <label> 时间  </label>
+                                <label><input type="date" class="form-control" name="nickTimes" id="searchTimes" value=""></label>
+                                <label><input type="submit" value="查询" id="searchBtn"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>     
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <table class="table table-striped Sumtable">
+                                <thead>
+                                    <tr>
+                                        <th>编号</th>
+                                        <th>姓名</th>
+                                        <th>标题</th>
+                                        <th>进度</th>
+                                        <th>遇到的问题</th>
+                                        <th>是否解决</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sumItems">
+                                    @*@{ List<SumBaseDto> sumList = TempData["sumList"] as List<SumBaseDto>;   
+                                       foreach(var item in sumList)
+                                       {
+                                           <tr>
+                                               <td>@item.ID</td>
+                                               <td>@item.User.Real_Name</td>
+                                               <td title="@item.Title">@item.Title</td>
+                                               <td title="@item.Progress">@item.Progress</td>
+                                               <td title="@item.Problem">@item.Problem</td>
+                                               <td>@item.IS_Solve</td>
+                                               <td><button class="btn btn-primary" onclick="window.location.href = 'http://localhost:25684/Summary/Person?id=@item.User_ID'">更多</button> <button class="btn btn-primary" data-toggle="modal" data-target="#Evaluation" onclick="Update(@item.ID)" id="eval">评价</button></td>
+                                           </tr> 
+                                       }
+                                    }*@
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">      
+                        </div>
+                        <div class="col-sm-6 wirteSum">
+                            <div>
+                                <ul id="pagesSums">
+                                    @*<li><a href="#">&laquo;</a></li>
+                                    <li class="active"><a href="#">1</a></li>
+                                    <li><a href="#">2</a></li>
+                                    <li><a href="#">3</a></li>
+                                    <li><a href="#">4</a></li>
+                                    <li><a href="#">5</a></li>
+                                    <li><a href="#">6</a></li>
+                                    <li><a href="#">&raquo;</a></li>*@
+                                </ul>
+                            </div>
+
+                                @*@{
+                                    List<SumBaseDto> sumList = TempData["sumList"] as List<SumBaseDto>;
+                                    if (ViewBag.recordCount > ViewBag.pageSize)
+                                    {
+                                        ShowPage(ViewBag.recordCount, ViewBag.pageSize, "", ViewBag.curPage);
+                                    }
+                                    var html='';
+                                    var index = (ViewBag.curPage - 1) * ViewBag.pageSize + 1;
+                                    foreach(var item in sumList)
+                                    {
+                                        for(var i = 0 ; i < ViewBag.recordCount ; i++)
+                                        {
+                                            <tr>
+                                               <td>@item.ID</td>
+                                               <td>@item.User.Real_Name</td>
+                                               <td title="@item.Title">@item.Title</td>
+                                               <td title="@item.Progress">@item.Progress</td>
+                                               <td title="@item.Problem">@item.Problem</td>
+                                               <td>@item.IS_Solve</td>
+                                               <td><button class="btn btn-primary" onclick="window.location.href = 'http://localhost:25684/Summary/Person?id=@item.User_ID'">更多</button> <button class="btn btn-primary" data-toggle="modal" data-target="#Evaluation" onclick="Update(@item.ID)" id="eval">评价</button></td>
+                                           </tr> 
+                                        }
+                                    } 
+                                    if(ViewBag.recordCount == 0)
+                                    {}
+                                }*@
+                         
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    @*<div class="modal fade" id="Evaluation">
+        <div class="modal-dialog">
+            @using (Html.BeginForm("Index", "Summary", FormMethod.Post))
+            {
+                <div class="modal-content">
+                     <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">教师评价</h4>
+                </div>
+                     <div class="modal-body">
+                         <textarea name="Teacher_evaluation" id="text"></textarea>
+                         <input style="display:none;" id="ID" name="TID">
+                         <input type="text" name="Teacher_evaluation"/>
+                    <script>
+                        //CKEDITOR.replace("Teacher_evaluation");
+                    </script>
+                </div>
+                     <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary">提交</button>
+                </div>
+                </div>
+            } 
+        </div>
+    </div>*@
+</section>
+<script>
+    var msg = "@ViewBag.Msg";
+    if (msg != "") {
+        layer.msg(msg, { time: 2000 });
+    }
+</script>

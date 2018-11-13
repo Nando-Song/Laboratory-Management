@@ -1,0 +1,165 @@
+﻿using LABMANAGE.Service.Sum;
+using LABMANAGE.Service.Sum.Dto;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using LABMANAGE.Unitity;
+using Newtonsoft.Json;
+using System.Web.Services;
+namespace LABMANAGE.Controllers
+{
+    public class SummaryController : Controller
+    {
+        public ISumService SumService { get; set; }
+        //
+        // GET: /Summary/
+        //public ActionResult Index()
+        //{
+        //    List<SumBaseDto> sumList = SumService.GetAll();
+        //    //string userName = SumService.GetOne(17);
+        //    TempData["sumList"] = sumList;
+        //    return View();
+        //}
+
+        //public ActionResult Index()
+        //{
+        //    long recordCount = 0;
+        //    string nickName = Request["nickName"].ToString();
+        //    string nickTimes = Request["nickTimes"].ToString();
+        //    int curPage = Convert.ToInt32(Request["curPage"].ToString());
+        //    int pageSize = ConfigHelp.GetConfigValue("sizePage");
+        //    List<SumBaseDto> sumList = SumService.GetSumList(nickName, nickTimes, curPage, pageSize, out recordCount);
+        //    TempData["sumList"] = sumList;
+        //    //ViewBag.recordCount = recordCount;
+        //    //ViewBag.curPage = curPage;
+        //    //ViewBag.pageSize = pageSize;
+        //    string jsonStr = JsonConvert.SerializeObject(new { recordCount = recordCount, lists = sumList });
+        //    return Json(jsonStr);
+        //}
+
+        public ActionResult Index()
+        {
+            return View();
+        }
+        [WebMethod]
+        public JsonResult GetSumList(string nickName, string nickTime, int curPage)
+        {
+            long recordCount = 0;
+            int pageSize = Convert.ToInt32(ConfigHelp.GetConfigValue("sizePage"));
+            List<SumBaseDto> sumList = SumService.GetSumList(nickName.Trim(), nickTime, curPage, pageSize, out recordCount);
+            string jsonStr = JsonConvert.SerializeObject(new { recordCount = recordCount, lists = sumList });
+            return Json(jsonStr);
+        }
+        //public JsonResult GetSumList(SumBaseDto summary)
+        //{
+        //    long recordCount = 0;
+        //    string nickName = summary.nickName;
+        //    string nickTimes = summary.nickTimes.ToString();
+        //    int curPage = 1;
+        //    int pageSize = ConfigHelp.GetConfigValue("sizePage");
+        //    List<SumBaseDto> sumList = SumService.GetSumList(nickName, nickTimes, curPage, pageSize, out recordCount);
+        //    string jsonStr = JsonConvert.SerializeObject(new { recordCount = recordCount, lists = sumList });
+        //    return Json(jsonStr);
+        //}
+       
+
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult Index(SumBaseDto summary)
+        {
+            bool isSuccess = SumService.Update(summary);
+            if (isSuccess == true)
+            {
+                ViewBag.Msgs = "提交成功！";
+            }
+            else
+            {
+                ViewBag.Msgs = "提交失败！";
+            }
+
+            //return View("EvalSubmit");
+            return RedirectPermanent("/Summary/EvalSum?Id=" + summary.TID+"&flag=true");
+        }
+
+
+        //public ActionResult Person()
+        //{
+        //    int id = Convert.ToInt32(Request.Params["id"]);
+        //    id = 0;
+        //    if(id == 0)
+        //    {
+        //       /*cookie保存的id*/
+        //        id = 15;
+        //    }
+        //    List<SumBaseDto> osList = SumService.GetOnePerson(id);        
+        //    TempData["osList"] = osList;
+        //    return View();
+        //}
+
+
+        //个人总结
+        public ActionResult Person(int id)
+        {
+            ViewBag.Msg = "";
+            ViewBag.PersonId = id;
+            return View();
+        }
+        [WebMethod] 
+        public JsonResult GetSumPer(string nickTime, int curPage, int id)
+        {
+           //int id = Convert.ToInt32(Request.Params ["id"]);
+            //id = 0;
+            //if (id == 0)
+           // {
+                /*cookie保存的id*/
+           //     id = 15;
+          //  }
+            long recordCount = 0;
+            int pageSize = Convert.ToInt32(ConfigHelp.GetConfigValue("sizePage"));
+            List<SumBaseDto> sumList = SumService.GetSumPer(nickTime, curPage, pageSize, id, out recordCount);
+            string jsonStr = JsonConvert.SerializeObject(new { recordCount = recordCount, lists = sumList });
+            return Json(jsonStr);
+        }
+        [HttpPost]
+        public ActionResult Person(SumBaseDto summary)
+        {
+            bool isSuccess = SumService.InsertSum(summary);
+            if (isSuccess == true)
+            {
+                ViewBag.Msg = "添加成功!";
+            }
+            else
+            {
+                ViewBag.Msg = "添加失败!";
+            }
+            return RedirectPermanent("/Summary/Person?id="+summary.User_ID);
+        }
+
+
+        public ActionResult EvalSum(int Id, bool flag)
+        {
+            if (flag == true)
+                ViewBag.Msgs = "提交成功！";
+            ViewBag.ID = Id;
+
+            return View();
+        }
+
+        //public ActionResult EvalSum(SumBaseDto summary, int id)
+        //{
+        //    bool isSuccess = SumService.Update(summary, id);
+        //    if (isSuccess == true)
+        //    {
+        //        ViewBag.Msg = "提交成功!";
+        //    }
+        //    else
+        //    {
+        //        ViewBag.Msg = "提交失败!";
+        //    }
+        //    return RedirectPermanent("/Summary/Index");
+        //}
+       
+	}
+}

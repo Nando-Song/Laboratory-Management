@@ -1,0 +1,137 @@
+﻿body{
+    background-color:#2E363F;
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+.register-box{
+    width:28% !important;
+    margin:0 auto !important;
+}
+.title{
+    color:#ffffff;
+}
+.rForm{
+    width:100%;
+    margin-bottom:20px !important;
+    line-height:35px !important;
+    height:39px;
+}
+.rGroup{
+    height:39px !important;
+    line-height:39px !important;
+    margin-top:10px;
+}
+.rs{
+    padding-left:4px !important;
+    padding-right:0px !important;
+}
+.rForm span{
+    padding:13px 18px;
+    width:45px;
+    color:#ffffff;
+    display:inline-block;  
+    margin-right:-4px;
+}
+.rp11{
+    background-color:#97e5a2;
+}
+.rP1{
+    background-color:#28b779;
+}
+.rP2{
+    background-color:#74d7ce;
+}
+.rP3{
+    background-color:#e27f7f;
+}
+.rP4{
+    background-color:#ffb848;
+    padding:13px 20px !important;
+}
+.rP5{
+    background-color:#b1aa5e;
+}
+.rP6{
+    background-color: #8c99e6; 
+    float: left;
+    padding: 13px 17px !important;
+    width: 46px !important;
+}
+.rP7{
+    background-color: #dd98d8;
+}
+.rForm input, #room_ID{
+    height:40px;
+    width:100%;
+    border-left:none;
+    border-top:1px solid #938a8a;
+    border-bottom:1px solid #938a8a;
+    border-right:1px solid #938a8a;
+    padding-left:10px;
+    outline:none;
+    border-radius: 0px;
+}
+.rForm ::-webkit-input-placeholder{
+    font-size:14px;
+}
+.rShort{
+    width: 70% !important; 
+    float: left;
+    border-right:none;
+    border-top:1px solid #938a8a;
+    border-bottom:1px solid #938a8a;
+    border-left:none;
+}
+.rSubmit{
+    width:100%;
+    background-color:#3c8dbc !important;
+    border:none;
+    color:#ffffff;
+    border-radius:0;
+    margin-left:16px;
+}
+.register-box-body{
+    border-radius:5px;
+}
+#v_container{
+    width: 29%;
+    height: 40px; 
+    float:left;
+    margin-left:3px;
+}
+.rRow{
+    margin-top:30px !important;
+}
+.required{
+    color:red;
+    font-size:16px;
+    float:right;
+    margin-top:5px;
+    line-height:34px;
+}
+.rLogin{
+    line-height:35px;
+}
+.error{
+    color:red;
+    font-size:14px;
+}
+.sError{
+    line-height:34px;
+}
+.sError ul li{
+    font-size:14px;
+    color:red;
+}
+.message {
+    font-size: 14px;
+    width: auto !important;
+    padding:0px !important;
+}
+.message span{
+    width: auto !important;
+    color: red !important;
+    padding:0px !important;
+}
+.group{
+    padding-left:0px !important;
+}

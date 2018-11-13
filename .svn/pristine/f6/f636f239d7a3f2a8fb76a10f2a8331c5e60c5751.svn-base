@@ -1,0 +1,251 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Web;
+using Microsoft.Office.Interop;
+using LABMANAGE.Data;
+using LABMANAGE.Repository;
+using System.Text;
+using System.Reflection;
+using System.IO;
+
+namespace LABMANAGE.Service.ysl_Sign_In.Dto
+{
+    public class Sign_InService :ISign_InService
+    {
+
+        public IQQInvRepository<Attendance> tableAttendance;
+        public Sign_InService(IQQInvRepository<Attendance> _tableAttendance)
+        {
+            tableAttendance = _tableAttendance;
+        }
+
+        
+
+        #region 获取签到表格
+        public List<Sign_dateModel> Get_data(int UID, int type)
+        {
+
+            var list = tableAttendance.Query().Where(c => c.User_ID == UID && c.Type == type); //?
+            List<AttendanceDto> qqList = list.ToList().ConvertAll(c => AutoMapperHelp.ConvertToDto<Attendance, AttendanceDto>(c));
+            AttendanceDto tt = qqList.FirstOrDefault();
+            Attendance ss = AutoMapperHelp.ConvertModel<Attendance, AttendanceDto>(tt);
+            int count = qqList.Count();
+
+            List<Sign_dateModel> Sign_dataList = new List<Sign_dateModel>();
+
+            for (int i = 0; i < count; i++ )
+            {
+                string face = "（ ^ _ ^ ）";
+                Sign_dateModel Sign_data = new Sign_dateModel();
+                if (qqList[i].State == 1)//签到状态 正常
+                {
+                    Sign_data.color = "green";
+                }
+                else if (qqList[i].State == 2)//签到状态迟到
+                {
+                    Sign_data.color = "bleak";
+                    face = "(っ°Д°;)っ";
+                }
+                else if (qqList[i].State == 3)//签到状态请假
+                {
+                    Sign_data.color = "red";
+                    face = "（ > _ < ）";
+                }
+
+                Sign_data.id = qqList[i].Shift;//签到次序
+
+                Sign_data.start = qqList[i].Time.ToString("yyyy-MM-dd HH:mm:ss");//签到时间
+                Sign_data.end = qqList[i].Time.ToString("yyyy-MM-dd");
+
+                if (qqList[i].Shift==1)
+                {
+                    Sign_data.title = face + "早";
+                    //Sign_data.start += " 08:30:00";
+                    //Sign_data.end += " 11:30:00";
+                }
+                else if (qqList[i].Shift == 2)
+                {
+                    Sign_data.title = face + "中";//（ > _ < ）
+                    //Sign_data.start += " 14:30:00";
+                    //Sign_data.end += " 17:30:00";
+                }
+                else if (qqList[i].Shift == 3)
+                {
+                    //∑(っ °Д °;)っ
+                    Sign_data.title = face + "晚";
+                    //Sign_data.start += " 19:00:00";
+                    //Sign_data.end += " 20:30:00";
+                }
+
+                
+                Sign_dataList.Add(Sign_data);
+            }
+            
+            return Sign_dataList;
+        }
+        #endregion
+
+        #region List转换成Json
+        /// <summary>
+        /// List转换成Json
+        /// </summary>
+        public string Obj2Json<Sign_dateModel>(List<Sign_dateModel> data)
+        {
+            try
+            {
+                System.Runtime.Serialization.Json.DataContractJsonSerializer serializer = new System.Runtime.Serialization.Json.DataContractJsonSerializer(data.GetType());
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    serializer.WriteObject(ms, data);
+                    return Encoding.UTF8.GetString(ms.ToArray());
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        #endregion
+
+        #region 判断当前是否签到
+
+        public bool Is_Sign_In(int UID)
+        {
+            string time = DateTime.Now.TimeOfDay.ToString();
+            string day = DateTime.Now.Date.ToString();
+            int Shift = time_Shift(time);
+            if(Shift>10)
+            {
+                Shift -= 10;
+            }
+            DateTime daydt = Convert.ToDateTime(day);
+
+            var list = tableAttendance.Query().Where(c => ( c.Time >= daydt) && ( c.Shift == Shift) && (c.User_ID == UID));
+            List<AttendanceDto> qqList = list.ToList().ConvertAll(c => AutoMapperHelp.ConvertToDto<Attendance, AttendanceDto>(c));
+            AttendanceDto tt = qqList.FirstOrDefault();
+            Attendance ss = AutoMapperHelp.ConvertModel<Attendance, AttendanceDto>(tt);
+            int count = qqList.Count();
+            if(count>0)
+            {
+                return true;
+            }
+            return false;
+        }
+        #endregion
+
+        #region 签到部分
+        public bool userSign(int UID, string ip)
+        {
+            //string Uip = (HttpContext.Current.Request.ServerVariables["HTTP_VIA"] != null) ? HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"].ToString() : HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"].ToString();//修改IP信息
+            string UIP = "";
+            if(UIP!=ip)
+            {
+                return false;
+            }
+            DateTime time = DateTime.Now;
+            Attendance att = new Attendance();
+            att.Time = time;
+            att.User_ID = UID;
+            att.Type = 1;
+            att.Shift = time_Shift(time.ToString());
+            if(att.Shift<10 && att.Shift!=4)
+            {
+                att.State = 1;
+            }
+            else if(att.Shift>10)
+            {
+                att.State = 2;
+                att.Shift = att.Shift - 10;
+            }
+            tableAttendance.Add(att);
+            return true;
+        }
+        #endregion
+
+        #region 添加数据
+        public void Ecxel_add(string time, int uid)
+        {
+            Attendance att = new Attendance();
+            att.Shift = time_Shift(time);
+            att.User_ID = uid;
+            att.Type = 2;
+            if (att.Shift < 10 && att.Shift != 4)
+            {
+                att.State = 1;
+            }
+            else if (att.Shift > 10)
+            {
+                att.State = 2;
+                att.Shift = att.Shift - 10;
+            }
+            att.Time = Convert.ToDateTime(time);
+
+            var list = tableAttendance.Query().Where(c => (c.Time >= att.Time) && (c.Type == att.Type) && (c.User_ID == uid));
+            List<AttendanceDto> qqList = list.ToList().ConvertAll(c => AutoMapperHelp.ConvertToDto<Attendance, AttendanceDto>(c));
+            AttendanceDto tt = qqList.FirstOrDefault();
+            Attendance ss = AutoMapperHelp.ConvertModel<Attendance, AttendanceDto>(tt);
+            int count = qqList.Count();
+            if (count <= 0)
+            {
+                tableAttendance.Add(att);
+            }
+        }
+
+        #endregion
+
+        #region 签到时间段
+        public int time_Shift(string time)//1 8:30~11：30 （11迟到）  2.14:30~17：30 （12迟到） 3.19~20：30 （13迟到）  4不在签到时间内
+        {
+            string _Day1 = "08:30";
+            string Day1 = "11:30";
+            string _Day2 = "14:30";
+            string Day2 = "17:30";
+            string _Day3 = "19:00";
+            string Day3 = "20:30";
+            TimeSpan _Day1_time = DateTime.Parse(_Day1).TimeOfDay;
+            TimeSpan Day1_time = DateTime.Parse(Day1).TimeOfDay;
+            TimeSpan _Day2_time = DateTime.Parse(_Day2).TimeOfDay;
+            TimeSpan Day2_time = DateTime.Parse(Day2).TimeOfDay;
+            TimeSpan _Day3_time = DateTime.Parse(_Day3).TimeOfDay;
+            TimeSpan Day3_time = DateTime.Parse(Day3).TimeOfDay;
+
+
+
+
+            DateTime t1 = Convert.ToDateTime(time);
+
+            TimeSpan dspNow = t1.TimeOfDay;
+            if (dspNow < _Day1_time)
+            {
+                return 1;
+            }
+            else if (dspNow > _Day1_time && dspNow < Day1_time)//迟到
+            {
+                return 11;
+            }
+            else if (dspNow > Day1_time && dspNow < _Day2_time)
+            {
+                return 2;
+            }
+            else if (dspNow > _Day2_time && dspNow < Day2_time)//迟到
+            {
+                return 12;
+            }
+            else if (dspNow > Day2_time && dspNow < _Day3_time)
+            {
+                return 3;
+            }
+            else if (dspNow > _Day3_time && dspNow < Day3_time)//迟到
+            {
+                return 13;
+            }
+            else
+            {
+                return 4;
+            }
+        }
+        #endregion
+    }
+}

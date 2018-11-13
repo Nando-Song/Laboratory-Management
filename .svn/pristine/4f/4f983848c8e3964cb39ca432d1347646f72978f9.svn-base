@@ -1,0 +1,58 @@
+﻿using LABMANAGE.Service.ysl_Sign_In.Dto;
+using LABMANAGE.UntityCode;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace LABMANAGE.Controllers
+{
+    public class YSL_Sign_InController : Controller
+    {
+        public ISign_InService ISIS { get; set; }
+
+        //
+        // GET: /ysl_Sign_In/
+        public ActionResult Sign_Show()
+        {
+            return View();
+        }
+
+        public JsonResult Sign_json(string text)
+        {
+
+            //目前无法登陆，先测试;
+            //int UID = int.Parse(LoginBase.ID);
+            int UID = 37;
+            List<Sign_dateModel> JsonData = ISIS.Get_data(UID);
+            //return Json(JsonData, JsonRequestBehavior.AllowGet);
+
+            return Json(ISIS.Obj2Json(JsonData), JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult Is_Sign(string text)
+        {
+            //int UID = int.Parse(LoginBase.ID);
+            int UID = 37;
+            bool IsSign = ISIS.Is_Sign_In(UID);
+
+            if (IsSign)
+            {
+
+                return Json("true", JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json("false", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        public JsonResult User_Sign(string text)
+        {
+            //int UID = int.Parse(LoginBase.ID);
+            int UID = 37;
+            ISIS.userSign(UID);
+            return Json("true", JsonRequestBehavior.AllowGet);
+        }
+	}
+}

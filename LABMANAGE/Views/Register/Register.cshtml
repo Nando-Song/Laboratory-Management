@@ -1,0 +1,107 @@
+﻿@model LABMANAGE.Service.Register.Dto.RegisterDto
+@using LABMANAGE.Service.Register.Dto
+@using LABMANAGE.Service.Rooms.Dto
+@{
+    Layout = null;
+    //ViewBag.Title = "实验室管理系统";
+    <link href="~/Content/dist/css/AdminLTE.min.css" rel="stylesheet" />  
+    <link href="~/Content/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/CSS/Register/css/Register.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome/css/font-awesome.min.css" rel="stylesheet" />    
+}
+<head>
+    <title>实验室管理系统</title>
+</head>    
+<div class="register-box">
+    <h2 class="register-logo title">实验室管理系统</h2>
+    <div class="register-box-body">
+        <form method="post" onsubmit="return CheckForm()">            
+            <div class="error"></div>
+            <div class="form-group rForm rGroup">
+                <span class="rP11 col-sm-2"><i class="fa fa-building"></i></span>
+                <div class="col-sm-10 rs">
+                    @Html.DropDownListFor(m => m.Room_ID, ViewData["Position"] as SelectList, "--请选择实验室--", new { @class = "form-control aInput" })
+                    @Html.ValidationMessageFor(m => m.Room_ID, "", new { @class = "message" })
+                </div>
+                <div class="required r2">*</div>
+            </div>
+            <div class="form-group rForm">
+                <span class="rP1 col-sm-2"><i class="fa fa-user"></i></span>
+                <div class="col-sm-10 rs">
+                    @Html.TextBoxFor(m => m.Name, new { @id = "name", @placeholder = "请填写昵称", @autocomplete = "on" })                    
+                    @Html.ValidationMessageFor(m => m.Name, "", new { @class = "message" })
+                </div>
+                <div class="required r1">*</div>
+            </div>
+            <div class="form-group rForm">
+                <span class="rP2 col-sm-2"><i class="fa fa-user-o"></i></span>
+                <div class="col-sm-10 rs">
+                    @Html.TextBoxFor(m => m.Real_Name, new { @id = "realName", @placeholder = "请填写真实姓名", @autocomplete = "on" })                  
+                    @Html.ValidationMessageFor(m => m.Real_Name, "", new { @class = "message" })
+                </div>
+                <div class="required r2">*</div>
+            </div>
+            <div class="form-group rForm">
+                <span class="rP7 col-sm-2"><i class="fa fa-phone"></i></span>
+                <div class="col-sm-10 rs">
+                    @Html.TextBoxFor(m => m.Phone, new { @id = "phoneNumber", @placeholder = "请填写手机号码", @autocomplete = "on" })                    
+                    @Html.ValidationMessageFor(m => m.Phone, "", new { @class = "message" })
+                </div>
+                <div class="required r3">*</div>
+            </div>
+            <div class="form-group rForm">
+                <span class="rP3 col-sm-2"><i class="fa fa-envelope"></i></span>
+                <div class="col-sm-10 rs">
+                    @Html.TextBoxFor(m => m.Email, new { @id = "email", @placeholder = "请填写邮箱", @autocomplete = "on" })                    
+                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "message" })
+                </div>
+                <div class="required r4">*</div>
+            </div>
+            <div class="form-group rForm">
+                <span class="rP4 col-sm-2"><i class="fa fa-lock"></i></span>
+                <div class="col-sm-10 rs">
+                    @Html.PasswordFor(m => m.Password, new { @id = "password", @placeholder = "请填写密码" })                    
+                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "message" })
+                </div>
+                <div class="required r5">*</div>
+            </div>
+            <div class="form-group rForm">
+                <span class="rP5 col-sm-2"><i class="fa fa-lock"></i></span>
+                <div class="col-sm-10 rs">
+                    @Html.PasswordFor(m => m.confirm, new { @id = "confirm", @placeholder = "请确认密码" })                    
+                    @Html.ValidationMessageFor(m => m.confirm, "", new { @class = "message" })
+                </div>
+                <div class="required r6">*</div>
+            </div>
+            <div class="form-group rForm">
+                <span class="rP6 col-sm-2"><i class="fa fa-check-square"></i></span>
+                <div class="col-sm-10 rs">
+                    <input type="text" name="verify" class="rShort" />
+                    <div id="v_container"></div>                    
+                </div>
+                <div class="required r7">*</div>
+            </div>
+            <input type="text" value="3" name="U_Role" style="display:none;" />
+            <input type="hidden" value="0" name="ID" id="id">
+            <div class="row rRow">
+                <div class="col-xs-8">
+                    <span class="rLogin">已有账号？立即 <a href="/Login/Login">登录</a></span>
+                </div>
+                <div class="col-xs-3">
+                    <button type="submit" class="rSubmit btn btn-info">注册</button>
+                </div>
+            </div>
+            @*<div class="sError">@Html.ValidationSummary(false)</div>*@
+        </form>
+    </div>
+</div>
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Content/gVerify/gVerify.js"></script>  
+<script src="~/JS/Register/Register.js"></script> 
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+
+
+

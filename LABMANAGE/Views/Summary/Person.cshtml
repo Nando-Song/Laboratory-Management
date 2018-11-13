@@ -1,0 +1,267 @@
+﻿@model LABMANAGE.Service.Sum.Dto.SumBaseDto     
+@using LABMANAGE.Service.Sum.Dto   
+@using LABMANAGE.UntityCode;
+@{
+    //ViewBag.Title = "Index";
+    <script src="https://cdn.ckeditor.com/4.6.2/standard/ckeditor.js"></script>
+    <link type="text/css" href="~/CSS/Summary.css" rel="stylesheet" />
+}
+
+
+<!-- DataTables -->
+<script src="~/Content/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="~/Content/plugins/datatables/dataTables.bootstrap.min.js"></script>
+<!-- Bootstrap 3.3.6 -->
+@*<script src="~/Content/bootstrap/js/bootstrap.min.js"></script>*@
+
+<!-- DataTables -->
+<link href="~/Content/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet" />
+<link href="~/Content/plugins/datatables/jquery.dataTables.min.css" rel="stylesheet" />
+<!-- Date Picker -->
+<link rel="stylesheet" href="~/Content/plugins/datepicker/datepicker3.css">
+<!-- Daterange picker -->
+<link rel="stylesheet" href="~/Content/plugins/daterangepicker/daterangepicker.css">
+
+<!-- InputMask -->
+<script src="~/Content/plugins/input-mask/jquery.inputmask.js"></script>
+<script src="~/Content/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+<script src="~/Content/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+<!-- date-range-picker -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+<script src="~/Content/plugins/daterangepicker/daterangepicker.js"></script>
+<!-- bootstrap datepicker -->
+<script src="~/Content/plugins/datepicker/bootstrap-datepicker.js"></script>
+<!-- bootstrap color picker -->
+<script src="~/Content/plugins/colorpicker/bootstrap-colorpicker.min.js"></script>
+<!-- bootstrap time picker -->
+<script src="~/Content/plugins/timepicker/bootstrap-timepicker.min.js"></script>
+
+
+<script src="~/JS/Date.js"></script>
+
+@*<script src="~/Content/layer/layer.js"></script>*@
+<section class="content-header">
+    <h2>个人总结</h2>
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header" style="border-bottom: 1px solid #eee;">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            @*<div>
+                                <label>每页显示 </label>
+                                <label>
+                                    <select class="form-control" id="pageSizeSelector" style="border-radius: 5px;">
+                                        <option value="5">5</option>
+                                        <option value="10">10</option>
+                                        <option value="15">15</option>
+                                        <option value="20">20</option>
+                                    </select>
+                                </label>
+                                <label> 条</label>
+                            </div>*@
+                            <div>
+                                <label> 时间  </label>
+                                <label><input class="form-control" name="bday" id="searchTimes" value="" style="border-radius: 5px; width: 240px; " type="text"></label>
+                                <label><input type="submit" value="查询" id="search_btn" class="btnt btn-primary"></label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                           
+                        </div>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <table class="table table-striped Sumtable">
+                                <thead>
+                                    <tr>
+                                        <th>编号</th>
+                                        <th>学习/工作内容</th>
+                                        <th>学习/工作情况简介</th>
+                                        <th>遇到的问题</th>
+                                        <th>是否解决</th>
+                                        <th>教师回复</th>
+                                        <th>日期</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sumItem">
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="SumBtn">
+                                
+                                    @*@if(Convert.ToInt32(@LoginBase.ID) == @ViewBag.personId)
+                                    {
+                                        <button class="btn btn-primary" data-toggle="modal" data-target="#WrSummary" id="btn_sum">添加</button>
+                                    }*@                                
+                            </div>
+
+                        </div>
+                        <div class="col-sm-6 wirteSum">
+                            <div>
+                                <ul id="pagesSum" class="pagesSum">
+                                    
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    var dt = false;
+    var nickTime = "";
+    $(function () {
+
+        var msg = "@ViewBag.Msg";
+        if (msg != "") {
+            layer.msg(msg, { time: 2000 });
+        }
+        var vsPage = 7;//可见页数
+        var pagesCount = 10;//总页数
+        var curPage = 1;//当前页
+        var id = "@ViewBag.PersonId";
+        //$("#pageSizeSelector").change(function () {
+        //    $('#pagesSum').empty();
+        //    $('#pagesSum').removeData("twbs-pagination");
+        //    $('#pagesSum').unbind("page");
+        //    GetSumPer(1, id, false);
+        //});
+        GetSumPer(1, id, false);
+        function GetSumPer(curPage, id, flag) {
+            //var pageSize = $("#pageSizeSelector").val();
+            $.ajax({
+                url: "/Summary/GetSumPer",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: "{'nickTime':'" + nickTime + "','curPage':'" + curPage + "','id':'" + id + "'}",
+                async: true,
+                cache: false,
+                type: "POST",
+                success: function (data) {
+                    //var pageSize = 1;
+                    var obj = JSON.parse(data);
+                    var pageSize = obj.pageSize;
+                    if (obj.recordCount > pageSize) {
+                        ShowPage(obj.recordCount, pageSize, "pagesSum", curPage, flag);
+                    }
+                    var html = '';
+
+                    var index = (curPage - 1) * pageSize + 1;
+                    for (var i = 0 ; i < obj.lists.length ; i++) {
+                        var id = obj.lists[i].ID;
+                        var time = obj.lists[i].Time.replace(/T/g, ' ').split('.')[0];
+                        html += '<tr><td>' + (index++) + '</td><td class="title" style="cursor:pointer;">' + obj.lists[i].Title + '</td><td class="progresst" style="cursor:pointer;">' + obj.lists[i].Progress + '</td>';
+                        if (obj.lists[i].Problem == null)
+                        {
+                            html += '<td>无</td>';
+                            html += '<td></td>';
+                        }
+                        else
+                        {
+                            html += '<td class="problem" style="cursor:pointer;">' + obj.lists[i].Problem + '</td>';
+                            if (obj.lists[i].IS_Solve == 0)
+                                html += '<td>已解决</td>';
+                            else if (obj.lists[i].IS_Solve == 1)
+                            {
+                                html += '<td>尚未解决</td>';
+                            }
+                        }                       
+                        if (obj.lists[i].Teacher_evaluation == null)
+                            html += '<td>暂无</td><td>' + time + '</td>';
+                        else
+                            html += '<td class="eval" style="cursor:pointer;">' + obj.lists[i].Teacher_evaluation + '</td><td>' + time + '</td>';
+                    }
+                    if (obj.lists.length == 0) {
+                        $("#pagesSum").empty();
+                        html = '<p>暂无相关总结</p>';
+                    }
+                    //$("#btn_sum").on("click", function () {
+                    //    //var id = $(this).attr("id");
+                    //    openAddSum();
+                    //});
+
+                   
+                    $("#sumItem").empty().html(html);
+                    $("#search_btn").unbind();
+                    $("#search_btn").on("click", function () {
+                        $("#pagesSum").empty();
+                        $("#pagesSum").removeData("twbs-pagination");
+                        $("#pagesSum").unbind("page");
+                        nickTime = $("#searchTimes").val();
+                        GetSumPer(1, "@ViewBag.PersonId", false);
+                    });
+
+                    $(".eval").on("click", function () {
+                        var Teval = $(this).text();
+                        layer.alert(Teval, {
+                            title: "教师回复",
+                            skin: 'layer-ext-moon' //该皮肤由layer.seaning.com友情扩展。关于皮肤的扩展规则，去这里查阅
+                        });
+                    }); 
+                    $(".title").on("click", function () {
+                        var Title = $(this).text();
+                        layer.alert(Title, {
+                            title: "学习/工作内容",
+                            skin: 'layer-ext-moon' //该皮肤由layer.seaning.com友情扩展。关于皮肤的扩展规则，去这里查阅
+                        });
+                    }); 
+                    $(".progresst").on("click", function () {
+                        var Progress = $(this).text();
+                        layer.alert(Progress, {
+                            title: "学习/工作情况简介",
+                            skin: 'layer-ext-moon' //该皮肤由layer.seaning.com友情扩展。关于皮肤的扩展规则，去这里查阅
+                        });
+                    });
+                    $(".problem").on("click", function () {
+                        var Problem = $(this).text();
+                        layer.alert(Problem, {
+                            title: "遇到的问题",
+                            skin: 'layer-ext-moon' //该皮肤由layer.seaning.com友情扩展。关于皮肤的扩展规则，去这里查阅
+                        });
+                    });
+                },
+                error: function (data) {
+                    alert("出现未知错误,请联系管理员!");
+                }
+            });
+        }
+
+
+        function ShowPage(count, pageSize, id, curPage, flag) {
+            pagesCount = Math.floor(count / pageSize) + (count % pageSize == 0 ? 0 : 1);
+            vsPage = 7;
+            vsPage = pagesCount > vsPage ? vsPage : pagesCount;
+            $('#' + id).twbsPagination({
+                totalPages: pagesCount,
+                visiblePages: vsPage,
+                startPage: curPage,
+                version: '1.1',
+                onPageClick: function (event, page) { //点击分页回调函数
+                    $('#' + id).find(".page").removeClass("active");
+                    $('#' + id).find(".page[data-page='" + page + "']").addClass("active");
+                    if (flag != false || flag == undefined) {
+                        GetSumPer(page, "@ViewBag.PersonId", true);
+                    }
+                    else {
+                        flag = true;
+                    }
+                }
+            });
+        }
+
+    });
+</script>
+<script src="~/Scripts/jquery.twbsPagination.js"></script>
+

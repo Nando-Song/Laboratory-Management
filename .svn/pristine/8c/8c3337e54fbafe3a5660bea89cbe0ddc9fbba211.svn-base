@@ -1,0 +1,57 @@
+﻿using AutoMapper;
+using LABMANAGE.Data;
+using LABMANAGE.Service.QQ.Dto;
+using LABMANAGE.Service.Register.Dto;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace LABMANAGE.Service
+{
+    public class AutoMapperHelp
+    {
+        /// <summary>
+        /// AutoMaper配置
+        /// </summary>
+        public static MapperConfiguration AutoMaperConfig = new MapperConfiguration(cfg =>
+        {
+            //cfg.CreateMap<QQBaseDto, QQINFO>();
+            //cfg.CreateMap<QQINFO, QQBaseDto>();
+            cfg.CreateMap<RegisterDto, User>();
+            cfg.CreateMap<User, RegisterDto>();
+        });
+        public static IMapper AutoMaper = AutoMaperConfig.CreateMapper();
+
+        /// <summary>
+        /// 转换为数据模型
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static T ConvertModel<T,S>(S result)
+        {
+            return AutoMaper.Map<T>(result);
+        }
+
+        /// <summary>
+        /// 根据视图模型赋值
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="result"></param>
+        public static void CloneModel<T,S>(T model, S result)
+        {
+            AutoMaper.Map<T, S>(model, result);
+        }
+
+
+        /// <summary>
+        /// 转换为视图模型
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static S ConvertToDto<T,S>(T model)
+        {
+            return AutoMaper.Map<S>(model);
+        }
+    }
+}

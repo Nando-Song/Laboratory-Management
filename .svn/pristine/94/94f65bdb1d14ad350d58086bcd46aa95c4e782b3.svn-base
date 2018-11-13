@@ -1,0 +1,6 @@
+﻿/*.wyh_form textarea{
+    height:540px;
+}*/
+.wyh_duty textarea{
+    margin-top:20px;
+}

@@ -1,0 +1,168 @@
+﻿using LABMANAGE.Service.Sum;
+using LABMANAGE.Service.Sum.Dto;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using LABMANAGE.Unitity;
+using Newtonsoft.Json;
+using System.Web.Services;
+using LABMANAGE.UntityCode;
+using NPOI.HSSF.UserModel;
+using NPOI.HPSF;
+using NPOI.SS.UserModel;
+using System.IO;
+namespace LABMANAGE.Controllers
+{
+    public class SummaryController : Controller
+    {
+        public ISumService SumService { get; set; }
+
+        public ActionResult Index()
+        {
+            return View();
+        }
+        [WebMethod]
+        public JsonResult GetSumList(string nickName, string nickTime, int curPage, int pageSize)
+        {
+            long recordCount = 0;
+            //int pageSize = Convert.ToInt32(ConfigHelp.GetConfigValue("sizePage"));
+            List<SumBaseDto> sumList = SumService.GetSumList(nickName.Trim(), nickTime, curPage, pageSize, out recordCount);
+            string jsonStr = JsonConvert.SerializeObject(new { recordCount = recordCount, lists = sumList });
+            return Json(jsonStr);
+        }
+      
+        public ActionResult EvalSum(int Id, bool flag)
+        {
+            if (flag == true)
+                ViewBag.Msgs = "提交成功！";
+            ViewBag.ID = Id;
+            string oldEval = SumService.GetOne(Id);
+            string eval = SumService.HtmlEntitiesEncode(oldEval);
+            eval = HttpUtility.HtmlDecode(eval);
+            ViewBag.oldEval = eval.Replace("\r\n", "<br/>");
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult Index(SumBaseDto summary)
+        {
+            bool isSuccess = SumService.Update(summary);
+            if (isSuccess == true)
+            {
+                ViewBag.Msgs = "提交成功！";
+            }
+            else
+            {
+                ViewBag.Msgs = "提交失败！";
+            }
+
+            //return View("EvalSubmit");
+            return RedirectPermanent("/Summary/EvalSum?Id=" + summary.TID + "&flag=true");
+        }
+
+        //个人总结
+        public ActionResult Person(int id)
+        {
+            ViewBag.Msg = "";
+            ViewBag.PersonId = id;
+            return View();
+        }
+        [WebMethod]
+        public JsonResult GetSumPer(string nickTime, int curPage, int id, int pageSize)
+        {
+            long recordCount = 0;
+            //int pageSize = Convert.ToInt32(ConfigHelp.GetConfigValue("sizePage"));
+            List<SumBaseDto> sumList = SumService.GetSumPer(nickTime, curPage, pageSize, id, out recordCount);
+            string jsonStr = JsonConvert.SerializeObject(new { recordCount = recordCount, lists = sumList });
+            return Json(jsonStr);
+        }
+
+        //添加总结
+        public ActionResult AddSum(int Id, bool flag)
+        {
+            if (flag == true)
+                ViewBag.Mssg = "添加成功！";
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Person(SumBaseDto summary)
+        {
+            bool isSuccess = SumService.InsertSum(summary);
+            if (isSuccess == true)
+            {
+                ViewBag.msg = "添加成功!";
+            }
+            else
+            {
+                ViewBag.msg = "添加失败!";
+            }
+            return RedirectPermanent("/Summary/AddSum?id=" + Convert.ToInt32(LoginBase.ID) + "&flag=true");
+        }
+
+        //导出到excell
+        public ContentResult Export(string nickName, string nickTime)
+        {
+            try
+            {
+                List<SumBaseDto> SumSheet = SumService.GetAll(nickName, nickTime);
+                HSSFWorkbook book = new HSSFWorkbook();
+                DocumentSummaryInformation dsi = PropertySetFactory.CreateDocumentSummaryInformation();
+                dsi.Company = "NPOI Team";
+                SummaryInformation si = PropertySetFactory.CreateSummaryInformation();
+                si.Subject = "NPTO SDK Example";
+                book.DocumentSummaryInformation = dsi;
+                book.SummaryInformation = si;
+                ISheet sheet = book.CreateSheet("Sheet1");
+
+                IRow row0 = sheet.CreateRow(0);
+                row0.CreateCell(0).SetCellValue("用户ID");
+                row0.CreateCell(1).SetCellValue("姓名");
+                row0.CreateCell(2).SetCellValue("标题");
+                row0.CreateCell(3).SetCellValue("进度");
+                row0.CreateCell(4).SetCellValue("遇到的问题");
+                row0.CreateCell(5).SetCellValue("是否解决");
+                row0.CreateCell(6).SetCellValue("评价");
+                row0.CreateCell(7).SetCellValue("开始时间");
+                row0.CreateCell(8).SetCellValue("结束时间");
+
+                for (int i = 1; i < SumSheet.Count; i++)
+                {
+                    IRow rowtemp = sheet.CreateRow(i);
+                    rowtemp.CreateCell(0).SetCellValue(SumSheet[i].User_ID);
+                    rowtemp.CreateCell(1).SetCellValue(SumSheet[i].Real_Name);
+                    rowtemp.CreateCell(2).SetCellValue(SumSheet[i].Title);
+                    rowtemp.CreateCell(3).SetCellValue(SumSheet[i].Progress);
+                    rowtemp.CreateCell(4).SetCellValue(SumSheet[i].Problem);
+                    if (SumSheet[i].Problem == "无")
+                        rowtemp.CreateCell(5).SetCellValue("");
+                    else
+                    {
+                        if(SumSheet[i].IS_Solve == 0)
+                            rowtemp.CreateCell(5).SetCellValue("尚未解决");
+                        if (SumSheet[i].IS_Solve == 1)
+                            rowtemp.CreateCell(5).SetCellValue("已解决");
+                    }
+                    rowtemp.CreateCell(6).SetCellValue(SumSheet[i].Teacher_evaluation);
+                    rowtemp.CreateCell(7).SetCellValue(SumSheet[i].Start_Time.ToString());
+                    rowtemp.CreateCell(8).SetCellValue(SumSheet[i].End_Time.ToString());
+                }
+
+                FileStream file = new FileStream(@"E:/test.xls", FileMode.Create);
+                book.Write(file);
+                file.Close();
+                //ViewBag.ExportMsg = "导出成功！";
+                return Content("true");
+            }
+            catch
+            {
+                //ViewBag.ExportMsg = "导出失败！";
+                return Content("false");
+            }
+           
+        }
+	}
+}

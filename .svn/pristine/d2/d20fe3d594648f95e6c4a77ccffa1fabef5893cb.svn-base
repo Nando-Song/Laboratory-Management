@@ -1,0 +1,228 @@
+﻿@using LABMANAGE.Service.Sum.Dto
+@model LABMANAGE.Service.Sum.Dto.SumBaseDto
+@using LABMANAGE.UntityCode;
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <script src="~/Content/plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <link type="text/css" href="~/CSS/Summary.css" rel="stylesheet" />
+    <link type="text/css" href="~/Content/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap 3.3.6 -->
+    <link href="~/Content/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- DataTables -->
+    <link href="~/Content/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/plugins/datatables/jquery.dataTables.min.css" rel="stylesheet" />
+    <!-- Date Picker -->
+    <link rel="stylesheet" href="~/Content/plugins/datepicker/datepicker3.css">
+    <!-- Daterange picker -->
+    <link rel="stylesheet" href="~/Content/plugins/daterangepicker/daterangepicker.css">
+    <!-- bootstrap wysihtml5 - text editor -->
+    <link rel="stylesheet" href="~/Content/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/Content/dist/css/AdminLTE.min.css">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+    folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="~/Content/dist/css/skins/_all-skins.min.css">
+    <link href="~/CSS/Summary.css" rel="stylesheet" />
+</head>
+<body>
+    @using (Html.BeginForm("Index", "Leave", FormMethod.Post))
+    {
+            <div>
+            <div class="box-body">
+                <div class="form-group">
+                    <label>申请人:</label>
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <i class="fa  fa-male"></i>
+                        </div>
+                        <input class="form-control" data-inputmask="'alias': 'user name'" name="user" data-mask="" type="text">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>请假时间:</label>
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <i class="fa fa-clock-o"></i>
+                        </div>
+                        <input id="reservationtime" class="form-control pull-right" name="time" type="text" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>请假事由:</label>
+                    <textarea class="form-control" rows="3" placeholder="Enter ..." name="Reason"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>审核人:</label>
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <i class="fa  fa-male"></i>
+                        </div>
+                        <input class="form-control" data-inputmask="'alias': 'user name'" name="valid" data-mask="" type="text">
+                    </div>
+                </div>
+                <div class="form-group">
+
+                    <div class="input-group pull-right">
+
+                        <button class="btn btn-info">提交</button>
+                        <i>&nbsp;&nbsp;</i>
+                    </div>
+                </div>
+            </div>
+        </div>
+}
+    <!-- jQuery 2.2.3 -->
+    <script src="~/Content/plugins/jQuery/jquery-2.2.3.min.js"></script>
+ 
+    <!-- DataTables -->
+    <script src="~/Content/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/Content/plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <!-- Bootstrap 3.3.6 -->
+    <script src="~/Content/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- InputMask -->
+    <script src="~/Content/plugins/input-mask/jquery.inputmask.js"></script>
+    <script src="~/Content/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+    <script src="~/Content/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+    <!-- date-range-picker -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+    <script src="~/Content/plugins/daterangepicker/daterangepicker.js"></script>
+    <!-- bootstrap datepicker -->
+    <script src="~/Content/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <!-- bootstrap color picker -->
+    <script src="~/Content/plugins/colorpicker/bootstrap-colorpicker.min.js"></script>
+    <!-- bootstrap time picker -->
+    <script src="~/Content/plugins/timepicker/bootstrap-timepicker.min.js"></script>
+
+    <!-- Page script -->
+    <script src="~/Content/layer/layer.js"></script>
+
+
+    <script type="text/javascript">
+        $(function () {
+            var msg = "@ViewBag.Mssg";
+            if (msg != "") {
+                var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                parent.layer.msg(msg, { time: 2000 });
+                parent.layer.close(index);
+            }
+        });
+    </script>
+    <script>
+        $(function () {
+            //Datemask dd/mm/yyyy
+            $("#datemask").inputmask("dd/mm/yyyy", {
+                "placeholder": "dd/mm/yyyy"
+            });
+            //Datemask2 mm/dd/yyyy
+            $("#datemask2").inputmask("mm/dd/yyyy", {
+                "placeholder": "mm/dd/yyyy"
+            });
+     
+            //Date range picker
+            $('#reservation').daterangepicker();
+            //Date range picker with time picker
+            $('#reservationtime').daterangepicker({
+                timePicker: true,
+                timePickerIncrement: 30,
+                format: 'MM/DD/YYYY h:mm A',
+                timePicker24Hour: false,
+                "locale": {
+                    "format": "YYYY/MM/DD HH:mm",
+                    "separator": " - ",
+                    "applyLabel": "Apply",
+                    "cancelLabel": "Cancel",
+                    "fromLabel": "From",
+                    "toLabel": "To",
+                    "customRangeLabel": "Custom",
+                    "daysOfWeek": [
+                        "Su",
+                        "Mo",
+                        "Tu",
+                        "We",
+                        "Th",
+                        "Fr",
+                        "Sa"
+                    ],
+                    "monthNames": [
+                        "January",
+                        "February",
+                        "March",
+                        "April",
+                        "May",
+                        "June",
+                        "July",
+                        "August",
+                        "September",
+                        "October",
+                        "November",
+                        "December"
+                    ],
+                    "firstDay": 1
+                }
+            });
+            //Date range as a button
+            $('#daterange-btn').daterangepicker({
+                ranges: {
+                    'Today': [moment(), moment()],
+                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                },
+                startDate: moment().subtract(29, 'days'),
+                endDate: moment()
+            },
+                function (start, end) {
+                    $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+                }
+            );
+            //Date picker
+            $('#datepicker').datepicker({
+                autoclose: true
+            });
+            //Colorpicker
+            $(".my-colorpicker1").colorpicker();
+            //color picker with addon
+            $(".my-colorpicker2").colorpicker();
+            //Timepicker
+            $(".timepicker").timepicker({
+                showInputs: false
+            });
+        });
+        $(function () {
+            $("#example1").DataTable();
+            $('#example').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false
+            });
+            $("#example2").DataTable();
+            $('#example').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false
+            });
+        });
+
+    </script>
+</body>
+</html>

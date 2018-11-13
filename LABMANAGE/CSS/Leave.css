@@ -1,0 +1,60 @@
+﻿body {
+}
+
+.SearchSum{
+    text-align:right;
+}
+
+.Sumtable tr th{
+    text-align:center;
+}
+
+.SumBtn{
+    margin-top:20px;
+}
+
+.wirteSum{
+   text-align:right;
+}
+
+.Sumtable{
+    table-layout:fixed;
+}
+
+.Sumtable td{
+    text-align:center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    vertical-align: middle !important;
+}
+
+.sfooter{
+    text-align: center;
+}
+
+.btnt{
+    padding: 5px 10px;
+    border: none;
+    border-radius: 3px;
+}
+
+#sumbox{
+    padding: 0 !important;
+}
+#progress,#problem{
+    min-width: 100%;
+    max-width:100%;
+    height:20%;
+    /*max-height: 30%;*/
+}
+
+@media screen and (max-width: 767px){
+    .box-header .row div{
+        text-align:center;
+    }
+    .box-body .row div{
+        text-align:center;
+    }
+}
+

@@ -1,0 +1,85 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>找回密码</title>
+    <link href="~/Content/bootstrap/css/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/CSS/Login.css" rel="stylesheet" />
+    <link href="~/Content/dist/css/AdminLTE.min.css" rel="stylesheet" />
+    <script src="~/Content/plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Content/gVerify/gVerify.js"></script>
+</head>
+<body>
+    <div>
+        <div class="login-box">
+            <div class="login-logo">
+                <b>找回密码</b>
+            </div>
+            <div class="login-box-body" id="formbx">
+                <form action="/Login/GetBackPwdSubmit" method="post" onsubmit="return Check()">
+                    <div class="control-group">
+                        <div class="controls">
+                            <span class="add-on lx"><i class="fa fa-user"></i></span>
+                            <input type="text" id="inputName" name="username" placeholder="用户名">
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <span class="add-on lh"><i class="fa fa-user-o"></i></span>
+                            <input type="text" id="Name" name="Realname" placeholder="真实姓名">
+                        </div>
+                    </div>                   
+                    <div class="control-group">
+                        <div class="controls">
+                            <span class="add-on lm "><i class="fa fa-envelope"></i></span>
+                            <input type="text" id="inputEmail" name="Email" placeholder="邮箱">
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <span class="add-on lh"><i class="fa fa-phone"></i></span>
+                            <input type="text" id="Phone" name="phone" placeholder="电话">
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <span class="add-on ly "><i class="fa fa-check-square"></i></span>
+                            <input type="text" id="inputCheck" name="check" placeholder="验证码">
+                            <div id="v_container"></div>
+                        </div>
+                    </div>
+                    <div class="error"><p>@ViewBag.Title</p></div>                    
+                    <div class="action">
+                        <p style="float: left; margin-left: -20px;">密码已找回立即&nbsp;&nbsp;<a href="/Login/Login">登录</a></p>
+                        <span class="right" style="margin-top:-10px;"><input type="submit" value="确定" class="btn btn-success"></span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function Check() {
+            var res = verifyCode.validate($("#inputCheck").val());
+            if (res == true) {
+                $(".error").html("");
+                return true;
+            }
+            else {
+                $(".error").html("验证码错误");
+                return false;
+            }
+
+        }
+        window.onload = function () {
+            verifyCode = new GVerify("v_container");
+        };
+    </script>
+</body>
+</html>

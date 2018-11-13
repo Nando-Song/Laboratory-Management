@@ -1,0 +1,66 @@
+﻿@model LABMANAGE.Service.Register.Dto.RegisterDto
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/CSS/UserManage.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet" />
+    <title>修改用户信息</title>
+</head>
+<body>
+    <div class="col-md-12 aHead">
+        <div class="error col-md-6"></div>
+    </div>
+    <form method="post" class="aDiv col-md-12">
+        <div class="form-group rForm r">
+            <span>昵称：</span>
+            @Html.TextBoxFor(m => m.Name, new { @id = "name", @autocomplete = "on", @value = "@ViewBag.Name" })
+            @Html.ValidationMessageFor(m => m.Name, "", new { @class = "message" })
+        </div>
+        <div class="form-group rForm r">
+            <span>真实姓名：</span>
+            @Html.TextBoxFor(m => m.Real_Name, new { @id = "realName", @autocomplete = "on", @value = "@ViewBag.Real_Name" })      
+            @Html.ValidationMessageFor(m => m.Real_Name, "", new { @class = "message" })
+        </div>
+        <div class="form-group rForm r">
+            <span>手机号码：</span>
+            @Html.TextBoxFor(m => m.Phone, new { @id = "phoneNumber", @autocomplete = "on", @value = "@ViewBag.Phone" })
+            @Html.ValidationMessageFor(m => m.Phone, "", new { @class = "message" }) 
+        </div>
+        <div class="form-group rForm r">
+            <span>邮箱：</span>
+            @Html.TextBoxFor(m => m.Email, new { @id = "email", @autocomplete = "on", @value = "@ViewBag.Email" })
+            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "message" })             
+        </div>
+        <input type="hidden" value="@ViewBag.ID" name="ID" id="id">
+        <input type="hidden" value="@ViewBag.Password" name="Password">
+        <input type="hidden" value="@ViewBag.Password" name="confirm">
+        
+        <button type="submit" class="aSub btn btn-info b">提交</button>
+    </form>
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    @*<script src="~/JS/Change.js"></script>*@
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script type="text/javascript">
+    $(function () {
+        var msg = "@ViewBag.cMessage";
+        if (msg != "") {
+            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+            parent.layer.msg(msg, { time: 2000 });
+            parent.layer.close(index);
+            setInterval("window.location.reload();", 2000);
+        }
+        $("#name").val("@ViewBag.Name");
+        $("#realName").val("@ViewBag.Real_Name");
+        $("#phoneNumber").val("@ViewBag.Phone");
+        $("#email").val("@ViewBag.Email");
+    });
+    </script>
+</body>
+</html>

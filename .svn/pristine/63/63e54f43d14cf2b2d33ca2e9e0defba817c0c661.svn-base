@@ -1,0 +1,166 @@
+﻿using LABMANAGE.SendEmail;
+using LABMANAGE.Service.Register;
+using LABMANAGE.Service.Register.Dto;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using LABMANAGE.Unitity;
+using LABMANAGE.Filter;
+using LABMANAGE.Service.Rooms.Dto;
+using LABMANAGE.Service.Rooms;
+namespace LABMANAGE.Controllers
+{
+    [HeadAuthorizeFilterAttribute(IsCheck = false)]
+    [AllowAnonymous]
+    public class RegisterController : Controller
+    {
+        public IRegisterService registerService { get; set; }
+        public IRoomService roomService { get; set; }
+        //
+        // GET: /Register/
+        public ActionResult Register()
+        {
+            List<RoomDto> list = new List<RoomDto>();
+            list = roomService.GetAll();
+            SelectList selList = new SelectList(list, "ID", "Name");
+            ViewData["Position"] = selList; 
+
+            return View();
+        }
+        [HttpPost]
+        public ActionResult Register(RegisterDto UserInfo)
+        {
+            //int pageSize = Convert.ToInt32(ConfigHelp.GetConfigValue("pageSize"));
+            try
+            {
+                if (ModelState.IsValid == false)
+                {
+                    ModelState.AddModelError("", "实体验证不合法");
+
+                    List<RoomDto> list = new List<RoomDto>();
+                    list = roomService.GetAll();
+                    SelectList selList = new SelectList(list, "ID", "Name");
+                    ViewData["Position"] = selList; 
+
+                    return View(UserInfo); //数据验证不通过后，重新跳到新增页面。  
+                }
+
+                bool InsertCount = registerService.InsertInfo(UserInfo);
+                /// <summary>
+                /// 发送邮件
+                /// </summary>
+                /// <param name="title">邮件主题</param>
+                /// <param name="email">要发送对象的邮箱</param>
+                /// <param name="content">邮件内容</param>
+                /// <returns></returns>
+                if (InsertCount)
+                {
+                    string senderServerIp = "smtp.163.com";   //使用163代理邮箱服务器（也可是使用qq的代理邮箱服务器，但需要与具体邮箱对相应）
+                    string toMailAddress = ConfigHelp.GetConfigValue("admin");              //要发送对象的邮箱
+                    //string toMailAddress = "3253475057@qq.com";
+                    string fromMailAddress = ConfigHelp.GetConfigValue("user");//你的邮箱
+                    string subjectInfo = "学生注册审核通知";                  //主题
+                    string bodyInfo = "<html>" + "名为 " + UserInfo.Real_Name + " 的学生提交了注册申请，请前往 http://10.1.56.30:8081/ “用户管理”界面进行审核" + "</html>";//以Html格式发送的邮件
+                    string mailUsername = ConfigHelp.GetConfigValue("user");              //登录邮箱的用户名
+                    string mailPassword = ConfigHelp.GetConfigValue("pass"); //对应的登录邮箱的第三方密码（你的邮箱不论是163还是qq邮箱，都需要自行开通stmp服务）
+                    string mailPort = "25";                      //发送邮箱的端口号
+                    //string attachPath = "E:\\123123.txt; E:\\haha.pdf";
+
+                    //创建发送邮箱的对象
+                    Email myEmail = new Email(senderServerIp, toMailAddress, fromMailAddress, subjectInfo, bodyInfo, mailUsername, mailPassword, mailPort, false, false);
+
+                    //添加附件
+                    //email.AddAttachments(attachPath);
+                    //string message;
+                    if (myEmail.Send())
+                    {                        
+                        return Content("<script>alert('已将审核邮件发送给管理员，请耐心等待');window.location.href='Register';</script>");    
+                    }
+                    else
+                    {
+                        return Content("<script>alert('邮件发送失败')window.location.href='Register';</script>");                     
+                    }
+                }
+            }
+            catch
+            {
+            }
+            return View();
+        }
+        [HttpGet]
+        public JsonResult CheckName(string Name, int ID) //检测昵称是否已经存在
+        {
+            try
+            {
+                //string Name = Request.Form["Name"].ToString();
+                List<RegisterDto> oneList = new List<RegisterDto>();
+                oneList = registerService.GetNameInfo(Name);
+                var List = oneList.FirstOrDefault();
+
+                if (oneList.Count == 0)
+                {
+                    return Json(true, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    if (List.ID == ID) return Json(true, JsonRequestBehavior.AllowGet);
+                    else return Json(false, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch
+            {
+                return Json("检测昵称是否存在出现错误", JsonRequestBehavior.AllowGet);
+            }
+        }
+        [HttpGet]
+        public JsonResult CheckPhone(string Phone, int ID) //检测手机号是否已经存在
+        {
+            try
+            {
+                //string Phone = Request.Form["Phone"].ToString();
+                List<RegisterDto> oneList = new List<RegisterDto>();
+                oneList = registerService.GetPhoneInfo(Phone);
+                var List = oneList.FirstOrDefault();
+                if (oneList.Count == 0)
+                {
+                    return Json(true, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    if (List.ID == ID) return Json(true, JsonRequestBehavior.AllowGet);
+                    else return Json(false, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch
+            {
+                return Json("检测手机号是否存在出现错误", JsonRequestBehavior.AllowGet);
+            }
+        }
+        [HttpGet]
+        public JsonResult CheckEmail(string Email, int ID) //检测邮箱是否已经存在
+        {
+            try
+            {
+                //string Email = Request.Form["Email"].ToString();    
+                List<RegisterDto> oneList = new List<RegisterDto>();
+                oneList = registerService.GetEmailInfo(Email);
+                var List = oneList.FirstOrDefault();
+                if (oneList.Count == 0)
+                {
+                    return Json(true, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    if (List.ID == ID) return Json(true, JsonRequestBehavior.AllowGet);
+                    else return Json(false, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch
+            {
+                return Json("检测邮箱是否存在出现错误", JsonRequestBehavior.AllowGet);
+            }
+        }
+	}
+}

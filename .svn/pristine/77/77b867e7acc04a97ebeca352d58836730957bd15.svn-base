@@ -1,0 +1,105 @@
+﻿using LABMANAGE.Service.ysl_Sign_In;
+using LABMANAGE.Service.ysl_Sign_In.Dto;
+using LABMANAGE.UntityCode;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace LABMANAGE.Controllers
+{
+    public class YSL_Sign_InController : Controller
+    {
+        public ISign_InService ISIS { get; set; }
+
+        public IUserDataService IUDS { get; set; }
+
+        //
+        // GET: /ysl_Sign_In/
+        public ActionResult Sign_Show()
+        {
+            List<User_name_uidDto> all_user = IUDS.getUser();
+            this.TempData["list"] = all_user;
+            return View();
+        }
+        //获取自己的签到信息
+        #region 获取默认（本人）签到信息
+        public JsonResult Sign_json(string text)
+        {
+
+            //目前无法登陆，先测试;
+            int UID = int.Parse(LoginBase.ID);
+            //int UID = 8;
+            List<Sign_dateModel> JsonData = ISIS.Get_data(UID,1);//1web 2考勤机
+            //return Json(JsonData, JsonRequestBehavior.AllowGet);
+
+            return Json(ISIS.Obj2Json(JsonData), JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+
+        //查看其它用户签到情况
+        #region 获取用户签到信息（限学生）
+        public JsonResult changeuser(string text)
+        {
+            int UID = int.Parse(Request.Form[0].ToString());
+            int type = int.Parse(Request.Form[1].ToString());
+
+            //目前无法登陆，先测试;
+            //int UID = 8;
+            List<Sign_dateModel> JsonData = ISIS.Get_data(UID,type);
+            //return Json(JsonData, JsonRequestBehavior.AllowGet);
+
+            return Json(ISIS.Obj2Json(JsonData), JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+
+        #region 判断当前用户是否签到
+        public JsonResult Is_Sign(string text)
+        {
+            int UID = 1 ;
+            try
+            {
+                UID = int.Parse(LoginBase.ID);
+
+                bool IsSign = ISIS.Is_Sign_In(UID);
+
+                if (IsSign)
+                {
+                    return Json("true", JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json("false", JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch
+            {
+                return Json("false", JsonRequestBehavior.AllowGet); ;
+            }
+        }
+        #endregion
+
+        #region 用户签到
+        public JsonResult User_Sign(string text)
+        {
+            int UID = int.Parse(LoginBase.ID);
+            //int UID = 8;
+            //
+            //IP属性目前没有加，等待后续更改
+            //
+            //string IP = LoginBase.IP;
+            string IP = "";
+            bool flag = ISIS.userSign(UID, IP);
+            return Json(flag, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+
+        public JsonResult get_all_user()
+        {
+            //List<User_name_uidDto> all_user = IUDS.getUser();
+            //TempData["list"] = all_user;
+            return Json("0");
+        }
+    }
+}

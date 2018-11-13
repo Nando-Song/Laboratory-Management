@@ -1,0 +1,6 @@
+﻿body {
+    background-color:red;
+}
+.nav-tabs-custom{
+    margin-top:30px;
+}

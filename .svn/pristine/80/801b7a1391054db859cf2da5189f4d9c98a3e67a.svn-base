@@ -1,0 +1,116 @@
+﻿using LABMANAGE.Service.lxm;
+using LABMANAGE.Service.lxm.Dto;
+using LABMANAGE.UntityCode;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace LABMANAGE.Controllers
+{
+    public class InfoController : Controller
+    {
+        public IUserService userService { get; set; }
+        //
+        // GET: /Info/
+        public ActionResult Index()
+        {
+            int id, seid;
+            seid = Convert.ToInt32(LoginBase.ID);
+            if (seid == 0)
+            {
+                id = 8;
+            }
+            else
+            {
+                id = seid;
+            }
+            List<UserBaseDto> list = new List<UserBaseDto>();
+            list = userService.GetAll(id);
+
+            TempData["list"] = list;
+
+            return View();
+        }
+        public ActionResult modify()
+        {
+            int id, seid;
+            seid = Convert.ToInt32(LoginBase.ID);
+            if (seid == 0)
+            {
+                id = 8;
+            }
+            else
+            {
+                id = seid;
+            }
+            List<UserBaseDto> list = new List<UserBaseDto>();
+            list = userService.GetAll(id);
+
+            TempData["list"] = list;
+
+            return View();
+        }
+        public ActionResult modifyInfo(string name, string password, string motto, string old_password)
+        {
+            int id, seid;
+            seid = Convert.ToInt32(LoginBase.ID);
+            if (seid == 0)
+            {
+                id = 8;
+            }
+            else
+            {
+                id = seid;
+            }
+            //UserBaseDto d1 = userService.Get(id);
+            //if (d1 != null)
+            //{
+            //    Session["userbase"] = d1;
+            //    return RedirectToAction("Index", "Home");
+            //}
+            userService.UpdateMessage(name, motto);
+
+            List<UserBaseDto> list = new List<UserBaseDto>();
+            list = userService.GetAll(id);
+            if (list[0].Password == old_password)
+            {
+                userService.Updatepwd(password);
+            }
+            else if (old_password != "")
+            {
+                Response.Write("<script>alert('原密码输入错误，密码修改失败！')</script>");
+            }
+            TempData["list"] = list;
+            return RedirectToAction("Index", "Info");
+        }
+        public JsonResult img(HttpPostedFileBase files)
+        {
+            try
+            {
+                string localPath = "/images"; 
+                string path = Server.MapPath("~" + localPath);
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                TimeSpan ts = DateTime.Now - TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
+                string fileName = (long)ts.TotalMilliseconds + Path.GetExtension(files.FileName);
+                //string fileName = files.FileName;
+                files.SaveAs(path + "/" + fileName);
+                string img = "../.." + localPath + "/" + fileName;
+                userService.Update(img);
+                LoginBase.Image = img;
+                return Json("{\"filePath\":\"" + localPath + "/" + fileName + "\",\"sourePath\":\"" + files.FileName + "\"}");
+                
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+	}
+}

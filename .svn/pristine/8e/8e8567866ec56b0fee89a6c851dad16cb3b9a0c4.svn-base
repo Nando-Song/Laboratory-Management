@@ -1,0 +1,49 @@
+﻿
+
+//签到部分
+function everyday_sign_in()
+{
+    //alert("denglu");
+    $.ajax({
+        url: "/ysl_Sign_In/User_Sign",
+        success: function (result) {
+            if (result)
+            {
+                layer.alert("签到成功！");
+                $(".YSL_Sign_In")[0].attributes['onclick'].value = null;
+                $(".YSL_Sign_In img")[0].attributes['src'].value = '../images/已签到.png';
+                setInterval(function () { location.reload(); }, 3000);
+                
+            }
+            else
+            {
+                layer.alert("签到失败！请检查当前ip是否为注册ip，出现问题可联系教师更改注册IP");
+            }
+            
+        },
+        error: function (result) {
+            layer.alert("签到未知错误 请联系kylin-------------------错误代码cw001");
+        }
+    });
+}
+
+$(function () {
+    $.ajax({
+        url: "/ysl_Sign_In/Is_Sign",
+        async: false,//请求是否异步，默认异步;
+        type: "POST",
+        dataType: 'json',
+        success: function (result) {
+            if (result == "false") {
+                $(".YSL_Sign_In img")[0].attributes['src'].value = '../images/每日签到.png';
+            }
+            else {
+                $(".YSL_Sign_In")[0].attributes['onclick'].value = null;
+                document.getElementsByClassName('YSL_Sign_In')[0].getElementsByTagName('img')[0].attributes['src'].value = '../images/已签到.png';
+            }
+        },
+        error: function (result) {
+            layer.alert("签到未知错误 请联系kylin-------------------错误代码cw002");
+        }
+    });
+});
